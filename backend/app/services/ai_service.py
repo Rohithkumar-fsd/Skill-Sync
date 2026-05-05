@@ -1,0 +1,187 @@
+import json
+import os
+from typing import Any, Dict, List
+
+try:
+    from openai import AsyncAzureOpenAI
+except Exception:  # pragma: no cover - optional dependency path
+    AsyncAzureOpenAI = None
+
+
+def _client():
+    if AsyncAzureOpenAI is None:
+        return None
+
+    api_key = os.getenv('AZURE_OPENAI_API_KEY')
+    endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
+    api_version = os.getenv('AZURE_OPENAI_API_VERSION')
+
+    if not api_key or not endpoint or not api_version:
+        return None
+
+    return AsyncAzureOpenAI(
+        api_key=api_key,
+        azure_endpoint=endpoint,
+        api_version=api_version,
+    )
+
+
+async def _ask_ai(system_prompt: str, payload: Dict[str, Any], fallback: Dict[str, Any]) -> Dict[str, Any]:
+    client = _client()
+    if client is None:
+        return fallback
+
+    try:
+        response = await client.chat.completions.create(
+            model=os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME', 'gpt-4o-mini'),
+            temperature=0.2,
+            messages=[
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': json.dumps(payload)},
+            ],
+        )
+        content = response.choices[0].message.content or ''
+        parsed = json.loads(content)
+        if isinstance(parsed, dict):
+            return parsed
+    except Exception:
+        return fallback
+
+    return fallback
+
+
+def _make_subskills(skill_name: str) -> List[Dict[str, Any]]:
+    base = [
+        f'{skill_name} fundamentals',
+        f'{skill_name} core concepts',
+        f'{skill_name} practice exercises',
+        f'{skill_name} real-world project',
+    ]
+    return [{'title': item, 'done': False} for item in base]
+
+
+async def generate_subskills(payload: Dict[str, Any]) -> Dict[str, Any]:
+    skill_name = payload.get('skillName') or payload.get('courseLink') or 'Skill'
+    fallback = {
+        'skillName': skill_name,
+        'subskills': _make_subskills(skill_name),
+        'source': 'fallback',
+    }
+    system_prompt = 'Return JSON with skillName and subskills array of {title, done} only.'
+    return await _ask_ai(system_prompt, payload, fallback)
+
+
+async def progress_insights(payload: Dict[str, Any]) -> Dict[str, Any]:
+    fallback = {
+        'title': 'Progress insights',
+        'suggestions': [
+            'Focus on one high-priority skill this week.',
+            'Complete at least one linked task daily.',
+            'Review inactive skills and reset their next action.',
+        ],
+        'source': 'fallback',
+    }
+    system_prompt = 'Return JSON with title and suggestions array of short sentences.'
+    return await _ask_ai(system_prompt, payload, fallback)
+
+
+async def priority_suggestions(payload: Dict[str, Any]) -> Dict[str, Any]:
+    skills = payload.get('skills', [])
+    suggestions = []
+    for skill in skills[:5]:
+        suggestions.append({
+            'id': skill.get('id'),
+            'name': skill.get('name'),
+            'priority': 'HIGH' if skill.get('progress', 0) < 40 else skill.get('priority', 'MEDIUM'),
+        })
+    fallback = {'suggestions': suggestions, 'source': 'fallback'}
+    system_prompt = 'Return JSON with suggestions array containing id, name, and priority.'
+    return await _ask_ai(system_prompt, payload, fallback)
+
+
+async def task_plan(payload: Dict[str, Any]) -> Dict[str, Any]:
+    tasks = payload.get('tasks', [])
+    ordered = sorted(
+        tasks,
+        key=lambda item: (
+            0 if item.get('priority') == 'HIGH' else 1 if item.get('priority') == 'MEDIUM' else 2,
+            item.get('deadline') or '9999-12-31',
+        ),
+    )
+    fallback = {
+        'orderedTasks': [
+            {'id': task.get('id'), 'title': task.get('title'), 'skillId': task.get('skillId')} for task in ordered
+        ],
+        'source': 'fallback',
+    }
+    system_prompt = 'Return JSON with orderedTasks array containing id, title, skillId.'
+    return await _ask_ai(system_prompt, payload, fallback)
+
+
+async def skill_gap(payload: Dict[str, Any]) -> Dict[str, Any]:
+    target_role = (payload.get('targetRole') or '').lower()
+    skills = payload.get('skills', [])
+    required_map = {
+        'frontend': ['html', 'css', 'javascript', 'react', 'state management'],
+        'backend': ['python', 'fastapi', 'apis', 'databases', 'authentication'],
+        'data': ['python', 'sql', 'statistics', 'visualization', 'machine learning'],
+        'devops': ['linux', 'docker', 'ci/cd', 'cloud', 'kubernetes'],
+    }
+    required = []
+    for key, values in required_map.items():
+        if key in target_role:
+            required = values
+            break
+    if not required:
+        required = ['core concepts', 'practical projects', 'testing', 'portfolio']
+
+    skill_names = {item.get('name', '').lower() for item in skills}
+    missing = [item for item in required if item not in skill_names]
+    fallback = {
+        'targetRole': payload.get('targetRole', ''),
+        'missingSkills': missing,
+        'learningOrder': missing[:],
+        'source': 'fallback',
+    }
+    system_prompt = 'Return JSON with targetRole, missingSkills, and learningOrder arrays.'
+    return await _ask_ai(system_prompt, payload, fallback)
+
+
+async def path_optimize(payload: Dict[str, Any]) -> Dict[str, Any]:
+    selected = payload.get('selectedSkills', [])
+    ordered = sorted(selected, key=lambda skill: (skill.get('priority') != 'HIGH', skill.get('progress', 0)))
+    fallback = {
+        'recommendedOrder': [skill.get('name') for skill in ordered],
+        'source': 'fallback',
+    }
+    system_prompt = 'Return JSON with recommendedOrder array of skill names.'
+    return await _ask_ai(system_prompt, payload, fallback)
+
+
+async def time_estimate(payload: Dict[str, Any]) -> Dict[str, Any]:
+    difficulty = (payload.get('difficulty') or 'MEDIUM').upper()
+    hours = {'HIGH': 24, 'MEDIUM': 16, 'LOW': 8}.get(difficulty, 12)
+    fallback = {
+        'skillName': payload.get('skillName', ''),
+        'estimatedHours': hours,
+        'source': 'fallback',
+    }
+    system_prompt = 'Return JSON with skillName and estimatedHours only.'
+    return await _ask_ai(system_prompt, payload, fallback)
+
+
+async def weekly_report(payload: Dict[str, Any]) -> Dict[str, Any]:
+    tasks = payload.get('tasks', [])
+    skills = payload.get('skills', [])
+    done = sum(1 for task in tasks if task.get('status') == 'COMPLETED')
+    missed = sum(1 for task in tasks if task.get('status') != 'COMPLETED')
+    progress_count = sum(1 for skill in skills if skill.get('progress', 0) > 0)
+    fallback = {
+        'done': done,
+        'missed': missed,
+        'skillsProgressed': progress_count,
+        'improve': ['Keep a daily task cadence', 'Link each task to one skill', 'Review stalled skills'],
+        'source': 'fallback',
+    }
+    system_prompt = 'Return JSON with done, missed, skillsProgressed, and improve array.'
+    return await _ask_ai(system_prompt, payload, fallback)

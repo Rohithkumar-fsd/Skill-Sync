@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LevelUP — Dashboard Redesign Wireframe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    background: #f5f5f5;
+    color: #333;
+    font-size: 13px;
+  }
+  /* Legend */
+  .legend {
+    position: fixed; top: 12px; right: 12px; z-index: 999;
+    background: white; border: 2px solid #333; border-radius: 6px;
+    padding: 10px 14px; font-size: 11px; line-height: 1.9;
+  }
+  .legend h4 { font-size: 12px; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+  .dot-reuse { background: #4CAF50; }
+  .dot-new   { background: #FF9800; }
+
+  /* Badge helper */
+  .badge {
+    position: absolute; top: 4px; right: 4px;
+    padding: 2px 6px; border-radius: 3px;
+    font-size: 10px; font-weight: bold; z-index: 10;
+    font-family: Arial, sans-serif;
+  }
+  .badge-reuse { background: #4CAF50; color: white; }
+  .badge-new   { background: #FF9800; color: white; }
+
+  /* Layout shell */
+  .shell { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px; min-height: 100vh; flex-shrink: 0;
+    background: white; border-right: 2px solid #333;
+    display: flex; flex-direction: column;
+    padding: 0;
+  }
+  .sidebar-header {
+    height: 56px; border-bottom: 2px solid #333;
+    display: flex; align-items: center; gap: 8px; padding: 0 12px;
+    font-weight: bold; font-size: 14px;
+  }
+  .logo-icon {
+    width: 28px; height: 28px; border: 2px solid #333; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: bold; background: #eee;
+  }
+  .sidebar-section { padding: 10px 8px 0; }
+  .sidebar-section label {
+    font-size: 9px; font-weight: bold; text-transform: uppercase;
+    color: #999; letter-spacing: 0.06em; padding-left: 8px; display: block; margin-bottom: 4px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 6px; font-size: 12px;
+    cursor: pointer; margin-bottom: 1px;
+    border: 1px solid transparent; color: #555;
+  }
+  .nav-item.active {
+    background: #eee; border-color: #ccc; color: #000; font-weight: bold;
+  }
+  .nav-item .icon-box {
+    width: 18px; height: 18px; border: 1px solid #aaa; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; background: #f9f9f9;
+  }
+  .ai-pill {
+    background: #f0f0f0; border: 2px dashed #aaa; border-radius: 6px;
+    margin: 8px; padding: 7px 10px; font-size: 11px; font-weight: bold;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sidebar-footer {
+    margin-top: auto; border-top: 2px solid #333; padding: 8px;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    height: 56px; border-bottom: 2px solid #333;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background: white; position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-left { font-size: 13px; font-weight: bold; color: #555; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .topbar-btn {
+    border: 1px solid #ccc; border-radius: 4px; padding: 4px 8px;
+    font-size: 11px; background: #f9f9f9; cursor: pointer;
+  }
+  .avatar-circle {
+    width: 30px; height: 30px; border: 2px solid #333; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: bold; background: #ddd;
+  }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; background: #f5f5f5; }
+  .content { padding: 20px 24px; flex: 1; }
+
+  /* ── Page Header ── */
+  .page-header { margin-bottom: 20px; }
+  .eyebrow { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
+  .page-title { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
+  .page-subtitle { font-size: 12px; color: #777; }
+  .header-row { display: flex; align-items: flex-end; justify-content: space-between; }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+  .btn {
+    border: 2px solid #333; border-radius: 6px; padding: 6px 14px;
+    font-size: 11px; font-weight: bold; background: white; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .btn-filled { background: #333; color: white; }
+  .btn-warn { background: #fff0f0; border-color: #e88; color: #c00; }
+
+  /* ── Stat Grid ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card {
+    background: white; border: 2px solid #ccc; border-radius: 8px;
+    padding: 14px 16px; position: relative;
+  }
+  .stat-card .icon-pill {
+    width: 32px; height: 32px; border: 1px solid #ccc; border-radius: 6px;
+    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px; font-size: 14px;
+  }
+  .stat-value { font-size: 24px; font-weight: bold; line-height: 1; margin-bottom: 3px; }
+  .stat-label { font-size: 11px; color: #777; }
+  .stat-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+
+  /* ── 2-col main grid ── */
+  .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+
+  /* ── Card ── */
+  .card {
+    background: white; border: 2px solid #ccc; border-radius: 8px;
+    padding: 16px; margin-bottom: 14px; position: relative;
+  }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .card-title { font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+  .card-title .icon-sm {
+    width: 16px; height: 16px; border: 1px solid #bbb; border-radius: 3px;
+    background: #eee; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 9px;
+  }
+  .card-action { font-size: 11px; color: #888; cursor: pointer; border-bottom: 1px dashed #aaa; }
+
+  /* ── Quick-add form ── */
+  .quick-add { display: flex; gap: 6px; margin-bottom: 12px; }
+  .quick-add input {
+    flex: 1; border: 2px solid #ccc; border-radius: 5px;
+    padding: 6px 10px; font-size: 12px; font-family: inherit;
+    background: #fafafa;
+  }
+  .quick-add button {
+    border: 2px solid #333; border-radius: 5px; background: #333;
+    color: white; padding: 0 10px; font-size: 16px; cursor: pointer;
+  }
+
+  /* ── Task row ── */
+  .task-row {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid #eee; border-radius: 6px; padding: 8px 10px;
+    margin-bottom: 6px; background: #fafafa;
+  }
+  .checkbox { width: 16px; height: 16px; border: 2px solid #999; border-radius: 4px; flex-shrink: 0; }
+  .task-title { flex: 1; font-size: 12px; }
+  .task-meta { font-size: 10px; color: #aaa; }
+  .priority-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid #aaa; }
+  .dot-high   { background: #e88; }
+  .dot-medium { background: #fb8; }
+  .dot-low    { background: #ccc; }
+
+  /* NEW: Inline task actions (always visible, not hover-only) */
+  .task-actions { display: flex; gap: 3px; flex-shrink: 0; }
+  .task-action-btn {
+    width: 22px; height: 22px; border: 1px solid #ddd; border-radius: 4px;
+    background: #f5f5f5; font-size: 9px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Skill progress card ── */
+  .skill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .skill-card {
+    border: 1px solid #ddd; border-radius: 6px; padding: 10px;
+    background: #fafafa; position: relative;
+  }
+  .skill-name { font-size: 11px; font-weight: bold; margin-bottom: 6px; }
+  .progress-track {
+    height: 6px; background: #e8e8e8; border-radius: 3px; margin-bottom: 4px; overflow: hidden;
+  }
+  .progress-fill { height: 100%; background: #666; border-radius: 3px; }
+  .skill-pct { font-size: 10px; color: #999; }
+
+  /* ── Right column ── */
+  .right-col .card { margin-bottom: 14px; }
+
+  /* Progress ring placeholder */
+  .ring-block { display: flex; align-items: center; gap: 16px; }
+  .ring-placeholder {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 8px solid #eee; border-top-color: #999;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: bold; color: #333; position: relative;
+  }
+  .ring-pct { font-size: 13px; font-weight: bold; }
+  .ring-legend { flex: 1; }
+  .ring-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-size: 11px; }
+  .ring-bar { flex: 1; height: 5px; background: #eee; border-radius: 2px; }
+  .ring-bar-fill { height: 100%; border-radius: 2px; background: #999; }
+
+  /* ── NEW: Notification/alert strip ── */
+  .alert-strip {
+    background: #fff8e6; border: 2px solid #f0c040; border-radius: 6px;
+    padding: 8px 12px; font-size: 11px; display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px;
+  }
+  .alert-icon { width: 18px; height: 18px; border-radius: 50%; background: #f0c040; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+
+  /* ── AI CTA ── */
+  .ai-cta {
+    background: #222; border-radius: 8px; padding: 16px;
+    color: white; position: relative; margin-bottom: 14px;
+  }
+  .ai-cta-title { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+  .ai-cta-sub { font-size: 11px; color: #aaa; margin-bottom: 10px; }
+  .ai-cta-btn {
+    background: white; color: #222; border: none; border-radius: 5px;
+    padding: 6px 14px; font-size: 11px; font-weight: bold; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+
+  /* ── NEW: Quick Access – list with hover-safe icons ── */
+  .quick-list { list-style: none; }
+  .quick-list li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 6px; border-radius: 5px; border: 1px solid transparent;
+    margin-bottom: 3px; font-size: 12px; cursor: pointer;
+  }
+  .quick-list li:hover { background: #f5f5f5; border-color: #e0e0e0; }
+  .quick-list .q-icon { width: 20px; height: 20px; border: 1px solid #ccc; border-radius: 4px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .quick-list .q-text { flex: 1; }
+  .quick-list .q-sub { font-size: 10px; color: #aaa; }
+  .quick-list .q-arrow { font-size: 10px; color: #bbb; }
+
+  /* ── Annotations ── */
+  .annotation {
+    display: inline-block; background: #ffffe0; border: 1px dashed #b8b800;
+    border-radius: 4px; padding: 3px 7px; font-size: 10px; color: #666;
+    margin-top: 5px;
+  }
+
+  /* ── Focus visible ring (NEW CSS class demonstrated) ── */
+  .btn:focus-visible, .task-action-btn:focus-visible, .quick-add button:focus-visible {
+    outline: 2px solid #555; outline-offset: 2px;
+  }
+
+  /* ── Section header ── */
+  .section-header {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #bbb; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 10px;
+  }
+
+  /* Mobile note */
+  .mobile-bar-note {
+    display: flex; gap: 0; border-top: 2px solid #ccc;
+    background: white; margin-top: 20px; border-radius: 0 0 6px 6px;
+    overflow: hidden;
+  }
+  .mobile-tab {
+    flex: 1; padding: 10px 4px; text-align: center; border-right: 1px solid #e0e0e0;
+    font-size: 10px; color: #888;
+  }
+  .mobile-tab.active { color: #333; font-weight: bold; background: #f5f5f5; }
+  .mobile-tab:last-child { border-right: none; }
+  .mobile-tab .tab-icon { font-size: 14px; display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Legend -->
+<div class="legend">
+  <h4>Component Legend</h4>
+  <div><span class="dot dot-reuse"></span> [REUSE] Existing component</div>
+  <div><span class="dot dot-new"></span> [NEW] Component to create</div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+     TITLE BLOCK
+────────────────────────────────────────────── -->
+<div style="background:#333; color:white; padding:14px 24px; font-family:Arial,sans-serif;">
+  <div style="font-size:16px; font-weight:bold;">LevelUP — Dashboard Redesign Wireframe</div>
+  <div style="font-size:12px; opacity:0.7; margin-top:3px;">
+    Key changes: fixed mobile sidebar · always-visible task actions · notification alert strip · improved focus states · consistent button rounding
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+     APP SHELL
+────────────────────────────────────────────── -->
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <!-- REUSABLE: AppShell from src/components/layout/AppShell.jsx (fixed) -->
+  <aside class="sidebar" style="position:relative;">
+    <span class="badge badge-reuse" style="top:2px;right:2px;">[REUSE] AppShell sidebar</span>
+
+    <div class="sidebar-header">
+      <div class="logo-icon">⚡</div>
+      LevelUP
+      <!-- Collapse arrow removed on mobile — sidebar uses drawer pattern -->
+    </div>
+
+    <!-- AI Skill Gap shortcut -->
+    <div class="sidebar-section" style="padding-top:12px;">
+      <!-- REUSABLE: NavLink + Zap icon -->
+      <div class="ai-pill">⚡ AI Skill Gap</div>
+      <div style="height:1px; background:#eee; margin:8px 6px;"></div>
+    </div>
+
+    <div class="sidebar-section" style="flex:1;">
+      <label>Main</label>
+      <div class="nav-item active"><span class="icon-box">⊞</span> Dashboard</div>
+      <div class="nav-item"><span class="icon-box">◈</span> Skills</div>
+      <div class="nav-item"><span class="icon-box">☰</span> Tasks</div>
+      <div class="nav-item"><span class="icon-box">◎</span> Goals</div>
+      <div class="nav-item"><span class="icon-box">▦</span> Analytics</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <label style="font-size:9px; text-transform:uppercase; letter-spacing:0.07em; color:#bbb; display:block; margin-bottom:4px; padding-left:4px;">Account</label>
+      <div class="nav-item"><span class="icon-box">👤</span> Profile</div>
+      <div class="nav-item"><span class="icon-box">⚙</span> Settings</div>
+      <div class="nav-item" style="color:#c00;"><span class="icon-box">⇥</span> Sign out</div>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <!-- REUSABLE: AppShell topbar from src/components/layout/AppShell.jsx -->
+    <header class="topbar" style="position:relative;">
+      <span class="badge badge-reuse" style="top:2px;right:2px; font-size:9px;">[REUSE] AppShell topbar</span>
+      <div class="topbar-left">Dashboard</div>
+      <div class="topbar-right">
+        <div class="topbar-btn">⚡ Skill Gap</div>
+        <!-- NEW: aria-label added to theme toggle -->
+        <!-- REUSABLE: ThemeToggle button with aria-label="Toggle dark mode" -->
+        <div class="topbar-btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</div>
+        <!-- REUSABLE: Avatar button with aria-label="View profile (Jeethgame12)" -->
+        <div class="avatar-circle" title="View profile" aria-label="View profile (Jeethgame12)">J</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ── PAGE HEADER ── -->
+      <!-- NEW: page-header class added to CSS (currently missing) -->
+      <div class="page-header" style="position:relative;">
+        <span class="badge badge-new" style="top:0; right:0;">[NEW] page-header CSS class</span>
+        <div class="header-row">
+          <div>
+            <div class="eyebrow">Personal Learning OS</div>
+            <div class="page-title">Good afternoon, Jeethgame12 👋</div>
+            <div class="page-subtitle">You have 2 skills in progress</div>
+          </div>
+          <div class="header-actions">
+            <!-- NEW: Overdue badge (only shown when overdue tasks exist) -->
+            <!-- REUSABLE: existing overdue button from Dashboard.jsx:232-239 -->
+            <div class="btn btn-warn" style="position:relative;">
+              <span class="badge badge-reuse" style="top:-6px;right:-6px;">[REUSE]</span>
+              ⚠ 1 overdue
+            </div>
+            <div class="btn btn-filled">⚡ Analyze Skill Gap</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NEW: Alert Strip for overdue/streak nudge ── -->
+      <!-- NEW: AlertStrip component — src/components/ui/AlertStrip.jsx -->
+      <div class="alert-strip" style="position:relative;">
+        <span class="badge badge-new">[NEW] AlertStrip</span>
+        <div class="alert-icon">⚡</div>
+        <div>
+          <strong>Streak at risk!</strong> You haven't logged progress today.
+          <span style="color:#888; margin-left:8px;">Log progress → </span>
+        </div>
+      </div>
+
+      <!-- ── STAT CARDS ── -->
+      <!-- REUSABLE: StatCard from src/pages/Dashboard.jsx:41-63 (promoted to shared component) -->
+      <div class="stat-grid">
+        <div class="stat-card" style="position:relative;">
+          <span class="badge badge-reuse">[REUSE] StatCard</span>
+          <div class="icon-pill">◈</div>
+          <div class="stat-value">1</div>
+          <div class="stat-label">Total Skills</div>
+          <div class="stat-sub">0 completed</div>
+        </div>
+        <div class="stat-card" style="position:relative;">
+          <span class="badge badge-reuse">[REUSE] StatCard</span>
+          <div class="icon-pill">◎</div>
+          <div class="stat-value">30%</div>
+          <div class="stat-label">Overall Progress</div>
+          <div class="stat-sub">1 in progress</div>
+        </div>
+        <div class="stat-card" style="position:relative;">
+          <span class="badge badge-reuse">[REUSE] StatCard</span>
+          <div class="icon-pill">☰</div>
+          <div class="stat-value">0</div>
+          <div class="stat-label">Tasks Today</div>
+          <div class="stat-sub">2 done total</div>
+        </div>
+        <!-- NEW: Streak card shows actual streak count OR a "Start your streak" CTA if 0 -->
+        <!-- NEW: StreakCard component — src/components/ui/StreakCard.jsx -->
+        <div class="stat-card" style="background:#fafafa; position:relative;">
+          <span class="badge badge-new">[NEW] StreakCard</span>
+          <div class="icon-pill">🔥</div>
+          <div class="stat-value">0</div>
+          <div class="stat-label">Day Streak</div>
+          <!-- NEW: CTA if streak is 0 (instead of "—") -->
+          <div style="margin-top:8px;">
+            <div class="btn" style="font-size:10px; padding:3px 8px;">Start streak →</div>
+          </div>
+          <div class="annotation">Replaces broken "—" placeholder</div>
+        </div>
+      </div>
+
+      <!-- ── MAIN 2-COLUMN GRID ── -->
+      <div class="main-grid">
+
+        <!-- LEFT: Tasks + Skills -->
+        <div>
+
+          <!-- TODAY'S TASKS -->
+          <!-- REUSABLE: card-surface + section-header from index.css -->
+          <div class="card" style="position:relative;">
+            <span class="badge badge-reuse">[REUSE] card-surface</span>
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon-sm">📅</span> Today's Tasks
+                <span style="font-size:11px; color:#999; font-weight:normal;">Monday, May 4</span>
+              </div>
+              <span class="card-action">View all ›</span>
+            </div>
+
+            <!-- Quick add (existing) -->
+            <!-- REUSABLE: quick-add form from Dashboard.jsx:314-325 -->
+            <div class="quick-add" style="position:relative;">
+              <span class="badge badge-reuse" style="top:-8px;">[REUSE] quick-add</span>
+              <input type="text" placeholder="Quick add a task…" />
+              <button>+</button>
+            </div>
+
+            <!-- Task list with ALWAYS-VISIBLE action buttons (fix for touch devices) -->
+            <!-- NEW: TaskRow updated — always show edit/delete on mobile -->
+            <div style="position:relative;">
+              <span class="badge badge-new" style="top:-4px;">[NEW] TaskRow actions always visible</span>
+              <div class="task-row">
+                <div class="checkbox"></div>
+                <div class="task-title">
+                  yoga
+                  <div class="task-meta">No due date · Medium</div>
+                </div>
+                <div class="priority-dot dot-medium"></div>
+                <!-- NEW: always-visible actions (not opacity-0 hover-only) -->
+                <div class="task-actions">
+                  <div class="task-action-btn" title="Edit task" aria-label="Edit yoga">✏</div>
+                  <div class="task-action-btn" style="color:#c00;" title="Delete task" aria-label="Delete yoga">🗑</div>
+                </div>
+              </div>
+              <div class="task-row">
+                <div class="checkbox"></div>
+                <div class="task-title">
+                  dsa
+                  <div class="task-meta">No due date · Medium</div>
+                </div>
+                <div class="priority-dot dot-medium"></div>
+                <div class="task-actions">
+                  <div class="task-action-btn" title="Edit task" aria-label="Edit dsa">✏</div>
+                  <div class="task-action-btn" style="color:#c00;" title="Delete task" aria-label="Delete dsa">🗑</div>
+                </div>
+              </div>
+            </div>
+            <div class="annotation">Edit/delete always visible (not opacity-0 hover-only) → fixes mobile UX</div>
+          </div>
+
+          <!-- SKILL PROGRESS -->
+          <!-- REUSABLE: SkillProgressCard from Dashboard.jsx:115-133 -->
+          <div class="card" style="position:relative;">
+            <span class="badge badge-reuse">[REUSE] SkillProgressCard</span>
+            <div class="card-header">
+              <div class="card-title"><span class="icon-sm">↗</span> Skill Progress</div>
+              <span class="card-action">Manage ›</span>
+            </div>
+            <div class="skill-grid">
+              <div class="skill-card">
+                <div class="skill-name">react</div>
+                <div class="progress-track"><div class="progress-fill" style="width:30%"></div></div>
+                <div class="skill-pct">30% · Not Started</div>
+              </div>
+              <div class="skill-card" style="border:2px dashed #ddd; background:#f9f9f9; display:flex; align-items:center; justify-content:center;">
+                <div style="text-align:center; color:#bbb; font-size:11px;">+ Add skill</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-col">
+
+          <!-- YOUR PROGRESS RING -->
+          <!-- REUSABLE: ProgressRing from Dashboard.jsx:98-112 (with aria-label added) -->
+          <div class="card" style="position:relative;">
+            <span class="badge badge-reuse">[REUSE] ProgressRing</span>
+            <div class="card-title" style="margin-bottom:12px;"><span class="icon-sm">▦</span> Your Progress</div>
+            <div class="ring-block">
+              <!-- NEW: SVG with role="img" aria-label="Overall progress: 30%" -->
+              <div class="ring-placeholder" role="img" aria-label="Overall progress: 30%">
+                <div>
+                  <div class="ring-pct">30%</div>
+                  <div style="font-size:9px; color:#aaa;">overall</div>
+                </div>
+              </div>
+              <div class="ring-legend">
+                <div class="ring-row">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#10b981;flex-shrink:0;"></div>
+                  <div class="task-title" style="font-size:11px;">Completed</div>
+                  <div style="font-size:11px; font-weight:bold;">0</div>
+                </div>
+                <div class="ring-row">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;flex-shrink:0;"></div>
+                  <div class="task-title" style="font-size:11px;">In Progress</div>
+                  <div style="font-size:11px; font-weight:bold;">0</div>
+                </div>
+                <div class="ring-row">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#ddd;flex-shrink:0;"></div>
+                  <div class="task-title" style="font-size:11px;">Not Started</div>
+                  <div style="font-size:11px; font-weight:bold;">1</div>
+                </div>
+              </div>
+            </div>
+            <div class="annotation">SVG gets role="img" aria-label for screen readers</div>
+          </div>
+
+          <!-- AI SKILL GAP CTA -->
+          <!-- REUSABLE: gradient CTA card from Dashboard.jsx:435-457 -->
+          <div class="ai-cta" style="position:relative;">
+            <span class="badge badge-reuse" style="background:#4CAF50;">[REUSE] AI CTA card</span>
+            <div style="font-size:20px; margin-bottom:8px;">⚡</div>
+            <div class="ai-cta-title">AI Skill Gap Analyzer</div>
+            <div class="ai-cta-sub">Upload your resume and discover exactly which skills you need for your target role.</div>
+            <button class="ai-cta-btn">Start Analysis →</button>
+          </div>
+
+          <!-- QUICK ACCESS (improved) -->
+          <!-- REUSABLE: Quick Access list from Dashboard.jsx:459-488 -->
+          <div class="card" style="position:relative;">
+            <span class="badge badge-reuse">[REUSE] Quick Access</span>
+            <div class="card-title" style="margin-bottom:10px;">Quick Access</div>
+            <ul class="quick-list">
+              <li>
+                <div class="q-icon">☰</div>
+                <div class="q-text">
+                  <div>Manage Tasks</div>
+                  <div class="q-sub">2 pending</div>
+                </div>
+                <div class="q-arrow">›</div>
+              </li>
+              <li>
+                <div class="q-icon">◎</div>
+                <div class="q-text">
+                  <div>Set Goals</div>
+                  <div class="q-sub">AI-powered guidance</div>
+                </div>
+                <div class="q-arrow">›</div>
+              </li>
+              <li>
+                <div class="q-icon">▦</div>
+                <div class="q-text">
+                  <div>View Analytics</div>
+                  <div class="q-sub">Track your progress</div>
+                </div>
+                <div class="q-arrow">›</div>
+              </li>
+              <li>
+                <div class="q-icon">⚡</div>
+                <div class="q-text">
+                  <div>Skill Gap</div>
+                  <div class="q-sub">Find missing skills</div>
+                </div>
+                <div class="q-arrow">›</div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div><!-- /main-grid -->
+
+      <!-- ── MOBILE BOTTOM BAR (shown at bottom on mobile) ── -->
+      <!-- REUSABLE: mobile-bottom-bar from AppShell.jsx:268-285 -->
+      <!-- NEW: Add Profile tab (currently missing) so Profile/Settings accessible on mobile -->
+      <div style="margin-top:30px; border: 2px dashed #ccc; border-radius:6px; padding:8px 12px;">
+        <div style="font-size:10px; color:#999; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.08em;">
+          Mobile Bottom Bar — visible on screens &lt;768px
+          <span class="badge badge-new" style="position:relative; top:0; right:0; margin-left:6px;">[NEW] Profile tab added</span>
+        </div>
+        <div class="mobile-bar-note">
+          <div class="mobile-tab active"><span class="tab-icon">⊞</span>Home</div>
+          <div class="mobile-tab"><span class="tab-icon">◈</span>Skills</div>
+          <div class="mobile-tab"><span class="tab-icon">☰</span>Tasks</div>
+          <div class="mobile-tab"><span class="tab-icon">◎</span>Goals</div>
+          <div class="mobile-tab"><span class="tab-icon">▦</span>Analytics</div>
+          <!-- NEW: Profile tab -->
+          <div class="mobile-tab" style="border-left: 2px dashed #FF9800; color:#FF9800;">
+            <span class="tab-icon">👤</span>Profile
+          </div>
+        </div>
+        <div class="annotation">Profile & Settings now reachable on mobile (currently only in sidebar)</div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ─────────────────────────────────────────────
+     CHANGE SUMMARY TABLE
+────────────────────────────────────────────── -->
+<div style="margin:20px 24px; background:white; border:2px solid #333; border-radius:8px; padding:16px; font-family:Arial,sans-serif;">
+  <h3 style="font-size:13px; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;">Key Changes in This Wireframe</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:11px;">
+    <thead>
+      <tr style="background:#f5f5f5;">
+        <th style="text-align:left; padding:5px 8px; border:1px solid #ddd;">Change</th>
+        <th style="text-align:left; padding:5px 8px; border:1px solid #ddd;">Type</th>
+        <th style="text-align:left; padding:5px 8px; border:1px solid #ddd;">Fixes Issue #</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">AlertStrip component for streak/overdue nudges</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#FF9800;color:white;border-radius:3px;padding:1px 5px;">NEW</span></td><td style="padding:5px 8px; border:1px solid #eee;">#13 (broken streak)</td></tr>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">StreakCard: 0-day state shows "Start streak" CTA instead of "—"</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#FF9800;color:white;border-radius:3px;padding:1px 5px;">NEW</span></td><td style="padding:5px 8px; border:1px solid #eee;">#13</td></tr>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">Task row edit/delete always visible (not hover-only)</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#FF9800;color:white;border-radius:3px;padding:1px 5px;">NEW</span></td><td style="padding:5px 8px; border:1px solid #eee;">#22 (mobile touch)</td></tr>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">aria-label on theme toggle, avatar, task action buttons</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#FF9800;color:white;border-radius:3px;padding:1px 5px;">NEW</span></td><td style="padding:5px 8px; border:1px solid #eee;">#9, #10, #18</td></tr>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">SVG ProgressRing gets role="img" + aria-label</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#FF9800;color:white;border-radius:3px;padding:1px 5px;">NEW</span></td><td style="padding:5px 8px; border:1px solid #eee;">#19</td></tr>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">Mobile bottom bar adds Profile tab</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#FF9800;color:white;border-radius:3px;padding:1px 5px;">NEW</span></td><td style="padding:5px 8px; border:1px solid #eee;">#24 (mobile nav gap)</td></tr>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">page-header CSS class defined in index.css</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#FF9800;color:white;border-radius:3px;padding:1px 5px;">NEW</span></td><td style="padding:5px 8px; border:1px solid #eee;">#4, #15</td></tr>
+      <tr><td style="padding:5px 8px; border:1px solid #eee;">AppShell, StatCard, ProgressRing etc. all reused as-is</td><td style="padding:5px 8px; border:1px solid #eee;"><span style="background:#4CAF50;color:white;border-radius:3px;padding:1px 5px;">REUSE</span></td><td style="padding:5px 8px; border:1px solid #eee;">—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
