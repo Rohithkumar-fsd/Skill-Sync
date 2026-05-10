@@ -86,16 +86,16 @@ export const SignIn = () => {
       {/* ── Left Hero Panel ─────────────────────────────────────────────── */}
       <div className="auth-hero w-[45%] relative overflow-hidden">
         {/* Decorative circles */}
-        <div className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-20 -translate-x-1/2 -translate-y-1/2"
-          style={{ background: 'radial-gradient(circle, #a78bfa, transparent)' }} />
-        <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-20 translate-x-1/3 translate-y-1/3"
+        <div className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-40 -translate-x-1/2 -translate-y-1/2"
+          style={{ background: 'radial-gradient(circle, #c4b5fd, transparent)' }} />
+        <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-30 translate-x-1/3 translate-y-1/3"
           style={{ background: 'radial-gradient(circle, #818cf8, transparent)' }} />
 
         <div className="relative z-10 flex flex-col h-full">
           {/* Brand */}
           <div className="flex items-center gap-3 mb-auto">
-            <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center shadow-2xl border border-white/10">
-              <Zap className="w-6 h-6 fill-white stroke-white" />
+            <div className="w-12 h-12 rounded-2xl bg-white text-indigo-600 flex items-center justify-center shadow-2xl">
+              <Zap className="w-6 h-6 fill-indigo-600 stroke-indigo-600" />
             </div>
           </div>
 
