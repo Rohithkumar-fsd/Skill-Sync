@@ -6,6 +6,7 @@ import { ThemeProvider } from './contexts/ThemeContext.jsx'
 import { ToastProvider } from './contexts/ToastContext.jsx'
 import { SkillProvider } from './contexts/SkillContext.jsx'
 import { TaskProvider } from './contexts/TaskContext.jsx'
+import { RoadmapProvider } from './contexts/RoadmapContext.jsx'
 import './styles/index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -14,9 +15,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ToastProvider>
         <SkillProvider>
           <TaskProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
+            <RoadmapProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </RoadmapProvider>
           </TaskProvider>
         </SkillProvider>
       </ToastProvider>

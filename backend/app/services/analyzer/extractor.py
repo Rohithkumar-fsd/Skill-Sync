@@ -343,8 +343,8 @@ class SkillExtractor:
             try:
                 cls._NLP = spacy.load("en_core_web_sm")
             except OSError:
-                # Model not downloaded – fall back to blank English pipeline
-                cls._NLP = spacy.blank("en")
+                # Model not downloaded – disable spaCy enrichment
+                cls._NLP = False
         except ImportError:
             cls._NLP = False
 

@@ -32,7 +32,7 @@ import {
   Radio,
   Palette,
   Code2,
-  Compass
+  Zap
 } from 'lucide-react';
 
 // Predefined options
@@ -264,10 +264,9 @@ const ProfileSetup = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
       <div className="mb-6 sm:mb-8 text-center animate-fade-in">
         <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="p-2.5 bg-white rounded-xl shadow-sm border border-gray-200">
-            <Compass className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
+          <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center shadow-2xl border border-white/10">
+            <Zap className="w-6 h-6 fill-white stroke-white" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">LevelUP</h1>
         </div>
         <p className="text-gray-500 text-xs sm:text-sm font-medium">Your personalized learning journey</p>
       </div>
@@ -388,7 +387,7 @@ const ProfileSetup = () => {
                           placeholder="Type a skill..."
                           value={customSkill}
                           onChange={(e) => setCustomSkill(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && addCustomSkill()}
+                          onKeyDown={(e) => e.key === 'Enter' && addCustomSkill()}
                           className="bg-white border-gray-200 focus:border-black"
                         />
                         <Button onClick={addCustomSkill} type="button" className="bg-black hover:bg-gray-800 text-white">Add</Button>
@@ -428,7 +427,7 @@ const ProfileSetup = () => {
                               key={domain.name}
                               type="button"
                               onClick={() => toggleInterest(domain.name)}
-                              className={`p-2.5 sm:p-3.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 border-2 ${formData.interests.includes(domain.name)
+                              className={`p-2.5 sm:p-3.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 border-2 ${formData.interests.includes(domain.name)
                                 ? 'border-black bg-gray-50 shadow-md'
                                 : 'border-gray-200 hover:border-gray-400 bg-white hover:shadow-sm'
                                 }`}
@@ -451,7 +450,7 @@ const ProfileSetup = () => {
                               key={domain.name}
                               type="button"
                               onClick={() => toggleInterest(domain.name)}
-                              className={`p-2.5 sm:p-3.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 border-2 ${formData.interests.includes(domain.name)
+                              className={`p-2.5 sm:p-3.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 border-2 ${formData.interests.includes(domain.name)
                                 ? 'border-black bg-gray-50 shadow-md'
                                 : 'border-gray-200 hover:border-gray-400 bg-white hover:shadow-sm'
                                 }`}
@@ -471,7 +470,7 @@ const ProfileSetup = () => {
                           placeholder="Type an interest..."
                           value={customInterest}
                           onChange={(e) => setCustomInterest(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && addCustomInterest()}
+                          onKeyDown={(e) => e.key === 'Enter' && addCustomInterest()}
                           className="bg-white border-gray-200 focus:border-black"
                         />
                         <Button onClick={addCustomInterest} type="button" className="bg-black hover:bg-gray-800 text-white">Add</Button>

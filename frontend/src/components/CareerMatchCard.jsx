@@ -39,7 +39,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                 transition={{ duration: 0.4 }}
                 className="w-full mt-6 mb-4"
             >
-                <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden">
+                <div className="bg-white dark:bg-card rounded-2xl border border-gray-200 dark:border-border overflow-hidden">
 
                     <div className="p-6 pb-5">
                         <div className="flex items-start justify-between gap-4">
@@ -60,7 +60,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                                     initial={{ opacity: 0, y: 8 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.15 }}
-                                    className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white leading-tight"
+                                    className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-foreground leading-tight"
                                 >
                                     {career}
                                 </motion.h2>
@@ -92,7 +92,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                                 initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
-                                className="bg-gray-50 dark:bg-zinc-800/50 rounded-xl p-4"
+                                className="bg-gray-50 dark:bg-accent/50 rounded-xl p-4"
                             >
                                 <div className="flex items-center gap-1.5 mb-2">
                                     <Sparkles className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
@@ -105,7 +105,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.4 }}
-                                        className="text-2xl font-bold text-gray-900 dark:text-white"
+                                        className="text-2xl font-bold text-gray-900 dark:text-foreground"
                                     >
                                         {confidence}
                                     </motion.span>
@@ -125,7 +125,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                                 initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.25 }}
-                                className="bg-gray-50 dark:bg-zinc-800/50 rounded-xl p-4"
+                                className="bg-gray-50 dark:bg-accent/50 rounded-xl p-4"
                             >
                                 <div className="flex items-center gap-1.5 mb-2">
                                     <Target className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
@@ -138,7 +138,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.45 }}
-                                        className="text-2xl font-bold text-gray-900 dark:text-white"
+                                        className="text-2xl font-bold text-gray-900 dark:text-foreground"
                                     >
                                         {skill_match_percentage}
                                     </motion.span>
@@ -158,7 +158,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                                 initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="bg-gray-50 dark:bg-zinc-800/50 rounded-xl p-4"
+                                className="bg-gray-50 dark:bg-accent/50 rounded-xl p-4"
                             >
                                 <div className="flex items-center gap-1.5 mb-2">
                                     <Zap className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
@@ -171,7 +171,7 @@ const CareerMatchCard = ({ careerDecision, onViewInsights }) => {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.5 }}
-                                        className="text-2xl font-bold text-gray-900 dark:text-white"
+                                        className="text-2xl font-bold text-gray-900 dark:text-foreground"
                                     >
                                         {market_readiness}
                                     </motion.span>

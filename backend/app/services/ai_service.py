@@ -3,37 +3,48 @@ import os
 from typing import Any, Dict, List
 
 try:
-    from openai import AsyncAzureOpenAI
+    from openai import AsyncAzureOpenAI, AsyncOpenAI
 except Exception:  # pragma: no cover - optional dependency path
     AsyncAzureOpenAI = None
+    AsyncOpenAI = None
 
 
 def _client():
-    if AsyncAzureOpenAI is None:
+    if AsyncAzureOpenAI is None or AsyncOpenAI is None:
         return None
 
-    api_key = os.getenv('AZURE_OPENAI_API_KEY')
+    azure_api_key = os.getenv('AZURE_OPENAI_API_KEY')
     endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
     api_version = os.getenv('AZURE_OPENAI_API_VERSION')
 
-    if not api_key or not endpoint or not api_version:
-        return None
+    if azure_api_key and endpoint and api_version:
+        return {
+            'client': AsyncAzureOpenAI(
+                api_key=azure_api_key,
+                azure_endpoint=endpoint,
+                api_version=api_version,
+            ),
+            'model': os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME', 'gpt-4o-mini'),
+        }
 
-    return AsyncAzureOpenAI(
-        api_key=api_key,
-        azure_endpoint=endpoint,
-        api_version=api_version,
-    )
+    openai_api_key = os.getenv('OPENAI_API_KEY')
+    if openai_api_key:
+        return {
+            'client': AsyncOpenAI(api_key=openai_api_key),
+            'model': os.getenv('OPENAI_MODEL', 'gpt-4o-mini'),
+        }
+
+    return None
 
 
 async def _ask_ai(system_prompt: str, payload: Dict[str, Any], fallback: Dict[str, Any]) -> Dict[str, Any]:
-    client = _client()
-    if client is None:
+    client_info = _client()
+    if client_info is None:
         return fallback
 
     try:
-        response = await client.chat.completions.create(
-            model=os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME', 'gpt-4o-mini'),
+        response = await client_info['client'].chat.completions.create(
+            model=client_info['model'],
             temperature=0.2,
             messages=[
                 {'role': 'system', 'content': system_prompt},

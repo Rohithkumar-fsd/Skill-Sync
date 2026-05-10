@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react'
 import { Plus, X, Layers3, Target, ArrowRight, BookOpen, Trash2 } from 'lucide-react'
-import { LearningShell } from '../components/learning/LearningShell'
+import { AppShell } from '../components/layout/AppShell'
+import { PageHeader } from '../components/ui/PageHeader'
 import { SkillCard } from '../components/learning/SkillCard'
+import ConfirmModal from '../components/ConfirmModal'
 import { useSkills } from '../contexts/SkillContext'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -18,15 +20,15 @@ const SlideOver = ({ title, isOpen, onClose, onSubmit, children, actions }) => {
   return (
     <>
       <div className="slideover-backdrop" onClick={onClose} />
-      <div className="slideover-panel">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800 shrink-0">
-          <h2 className="text-base font-bold text-gray-900 dark:text-white">{title}</h2>
-          <button onClick={onClose} className="btn-icon"><X className="w-4 h-4" /></button>
+      <div className="slideover-panel" role="dialog" aria-modal="true" aria-labelledby="skills-slideover-title">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
+          <h2 id="skills-slideover-title" className="text-base font-bold text-gray-900">{title}</h2>
+          <button onClick={onClose} className="btn-icon" aria-label="Close panel"><X className="w-4 h-4" /></button>
         </div>
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
           {children}
         </div>
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 flex gap-3 shrink-0">
+        <div className="px-6 py-4 border-t border-gray-200 flex gap-3 shrink-0">
           <button onClick={onClose} className="btn-outline flex-1">Cancel</button>
           {actions}
         </div>
@@ -48,6 +50,7 @@ const Skills = () => {
   const [editingCategoryId, setEditingCategoryId] = useState(null)
   const [editingSkillId, setEditingSkillId]       = useState(null)
   const [subskillText, setSubskillText]           = useState('')
+  const [confirmDelete, setConfirmDelete]         = useState(null)
 
   const skillsByCategory = useMemo(() => {
     return categories.map((cat) => ({
@@ -71,10 +74,10 @@ const Skills = () => {
   }
 
   const handleDeleteCategory = async () => {
-    if (editingCategoryId && window.confirm('Are you sure you want to delete this category? All skills inside will be orphaned.')) {
-      await deleteCategory(editingCategoryId)
-      setShowCategoryForm(false)
-    }
+    if (!editingCategoryId) return
+    await deleteCategory(editingCategoryId)
+    setConfirmDelete(null)
+    setShowCategoryForm(false)
   }
 
   // ── Skill Handlers ──
@@ -102,41 +105,43 @@ const Skills = () => {
   }
 
   const handleDeleteSkill = async () => {
-    if (editingSkillId && window.confirm('Delete this skill?')) {
-      await deleteSkill(editingSkillId)
-      setShowSkillForm(false)
-    }
+    if (!editingSkillId) return
+    await deleteSkill(editingSkillId)
+    setConfirmDelete(null)
+    setShowSkillForm(false)
   }
 
   return (
-    <LearningShell title="Skills" subtitle="Map out your knowledge base. Group skills by categories and track your mastery.">
+    <AppShell>
+      <div className="page-container animate-fade-slide-in">
+        <PageHeader 
+          title="Skills" 
+          subtitle="Map out your knowledge base. Group skills by categories and track your mastery." 
+          actions={
+            <>
+              <button 
+                onClick={() => { setEditingCategoryId(null); setCategoryForm(emptyCategory); setShowCategoryForm(true) }}
+                className="btn-outline text-xs"
+              >
+                <Layers3 className="w-4 h-4" /> New Category
+              </button>
+              <button 
+                onClick={() => { setEditingSkillId(null); setSkillForm(emptySkill); setSubskillText(''); setShowSkillForm(true) }}
+                className="btn-primary text-xs"
+              >
+                <Plus className="w-4 h-4" /> Add Skill
+              </button>
+            </>
+          }
+        />
       
-      {/* Toolbars */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-        <div className="flex-1" />
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button 
-            onClick={() => { setEditingCategoryId(null); setCategoryForm(emptyCategory); setShowCategoryForm(true) }}
-            className="btn-outline flex-1 sm:flex-none text-xs"
-          >
-            <Layers3 className="w-4 h-4" /> New Category
-          </button>
-          <button 
-            onClick={() => { setEditingSkillId(null); setSkillForm(emptySkill); setSubskillText(''); setShowSkillForm(true) }}
-            className="btn-primary flex-1 sm:flex-none text-xs"
-          >
-            <Plus className="w-4 h-4" /> Add Skill
-          </button>
-        </div>
-      </div>
-
       {categories.length === 0 ? (
         <div className="empty-state py-16">
-          <div className="empty-state-icon bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500">
-            <BookOpen className="w-8 h-8" />
+          <div className="empty-state-icon bg-gray-100 text-gray-600">
+            <Zap className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mt-4">Start your learning map</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-sm mb-6">
+          <h3 className="text-lg font-bold text-gray-900 mt-4">Start your learning map</h3>
+          <p className="text-sm text-gray-600 mt-2 max-w-sm mb-6">
             Create categories like "Frontend", "Backend", or "Soft Skills" to organize what you want to learn.
           </p>
           <button onClick={() => setShowCategoryForm(true)} className="btn-primary">
@@ -150,13 +155,13 @@ const Skills = () => {
               {/* Category Header */}
               <div className="flex items-center justify-between mb-5 group">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                     {cat.name}
-                    <span className="text-xs font-semibold bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
                       {cat.items.length}
                     </span>
                   </h2>
-                  {cat.description && <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{cat.description}</p>}
+                  {cat.description && <p className="text-sm text-gray-600 mt-1">{cat.description}</p>}
                 </div>
                 <button 
                   onClick={() => handleEditCategory(cat)}
@@ -168,11 +173,11 @@ const Skills = () => {
 
               {/* Grid of skills */}
               {cat.items.length === 0 ? (
-                <div className="rounded-2xl border-2 border-dashed border-gray-200 dark:border-zinc-800 p-8 text-center bg-gray-50/50 dark:bg-zinc-900/50">
-                  <p className="text-sm text-gray-500 dark:text-zinc-400">No skills in this category yet.</p>
+                <div className="rounded-xl border-2 border-dashed border-gray-200 p-8 text-center bg-gray-50">
+                  <p className="text-sm text-gray-500">No skills in this category yet.</p>
                   <button 
                     onClick={() => { setEditingSkillId(null); setSkillForm({ ...emptySkill, categoryId: cat.id }); setSubskillText(''); setShowSkillForm(true) }}
-                    className="mt-3 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700"
+                    className="mt-3 text-sm font-semibold text-black hover:text-gray-700"
                   >
                     + Add a skill
                   </button>
@@ -200,7 +205,7 @@ const Skills = () => {
           actions={
             <>
               {editingCategoryId && (
-                <button onClick={handleDeleteCategory} className="btn-icon w-auto px-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30" title="Delete">
+                <button onClick={() => setConfirmDelete('category')} className="btn-icon w-auto px-3 text-red-500 hover:bg-red-50" title="Delete">
                   <Trash2 className="w-4 h-4" />
                 </button>
               )}
@@ -229,7 +234,7 @@ const Skills = () => {
           actions={
             <>
               {editingSkillId && (
-                <button onClick={handleDeleteSkill} className="btn-icon w-auto px-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30">
+                <button onClick={() => setConfirmDelete('skill')} className="btn-icon w-auto px-3 text-red-500 hover:bg-red-50">
                   <Trash2 className="w-4 h-4" />
                 </button>
               )}
@@ -247,7 +252,7 @@ const Skills = () => {
           <div>
             <label className="label-base">Category</label>
             <select className="input-base" value={skillForm.categoryId} onChange={e => setSkillForm({...skillForm, categoryId: e.target.value})}>
-              <option value="">— Select a category —</option>
+              <option value="">Select a category</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
@@ -279,7 +284,7 @@ const Skills = () => {
           <div>
             <div className="flex justify-between mb-1.5">
               <label className="label-base mb-0">Progress</label>
-              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{skillForm.progress}%</span>
+              <span className="text-xs font-bold text-black">{skillForm.progress}%</span>
             </div>
             <input type="range" min="0" max="100" value={skillForm.progress} onChange={e => setSkillForm({...skillForm, progress: Number(e.target.value)})} className="w-full accent-indigo-600" />
           </div>
@@ -292,7 +297,23 @@ const Skills = () => {
         </SlideOver>
       </AnimatePresence>
 
-    </LearningShell>
+      <ConfirmModal
+        isOpen={Boolean(confirmDelete)}
+        title={confirmDelete === 'category' ? 'Delete category?' : 'Delete skill?'}
+        message={
+          confirmDelete === 'category'
+            ? 'This removes the category. Skills inside may become uncategorized.'
+            : 'This removes the skill and its progress from your learning map.'
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        onConfirm={confirmDelete === 'category' ? handleDeleteCategory : handleDeleteSkill}
+        onCancel={() => setConfirmDelete(null)}
+      />
+
+      </div>
+    </AppShell>
   )
 }
 

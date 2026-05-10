@@ -9,7 +9,7 @@ const PRIORITY_CONFIG = {
 }
 
 const STATUS_CONFIG = {
-  NOT_STARTED: { label: 'Not Started', cls: 'text-gray-500 dark:text-zinc-400' },
+  NOT_STARTED: { label: 'Not Started', cls: 'text-gray-500 dark:text-muted-foreground' },
   IN_PROGRESS:  { label: 'In Progress',  cls: 'text-blue-600 dark:text-blue-400' },
   COMPLETED:    { label: 'Completed',    cls: 'text-emerald-600 dark:text-emerald-400' },
 }
@@ -25,7 +25,7 @@ export const SkillCard = ({ skill, onEdit }) => {
       {/* Top row */}
       <div className="flex items-start justify-between mb-3">
         <Link to={`/skills/${skill.id}`} className="block flex-1 pr-4">
-          <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+          <h3 className="font-bold text-gray-900 dark:text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
             {skill.name}
           </h3>
         </Link>
@@ -37,14 +37,14 @@ export const SkillCard = ({ skill, onEdit }) => {
         </button>
       </div>
 
-      <p className="text-sm text-gray-500 dark:text-zinc-400 line-clamp-2 mb-6 flex-1 min-h-[40px]">
+      <p className="text-sm text-gray-500 dark:text-muted-foreground line-clamp-2 mb-6 flex-1 min-h-[40px]">
         {skill.description || 'No description provided.'}
       </p>
 
       {/* Progress */}
       <div className="space-y-2 mb-4">
         <div className="flex items-center justify-between text-xs font-semibold">
-          <span className="text-gray-900 dark:text-white">{pct}%</span>
+          <span className="text-gray-900 dark:text-foreground">{pct}%</span>
           <span className={sCfg.cls}>{sCfg.label}</span>
         </div>
         <div className="progress-track h-1.5">
@@ -56,7 +56,7 @@ export const SkillCard = ({ skill, onEdit }) => {
       </div>
 
       {/* Footer */}
-      <div className="pt-4 mt-auto border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between text-[11px] text-gray-500 dark:text-zinc-500 font-medium">
+      <div className="pt-4 mt-auto border-t border-gray-100 dark:border-border flex items-center justify-between text-[11px] text-gray-500 dark:text-muted-foreground font-medium">
         <div className="flex gap-3">
           <span>{skill.subskills?.length || 0} items</span>
           {skill.notes && <span>Has notes</span>}

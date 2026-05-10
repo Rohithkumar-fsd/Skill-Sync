@@ -16,7 +16,7 @@ export const CategoryColumn = ({ category, items = [] }) => {
   return (
     <section
       ref={setNodeRef}
-      className={`w-[320px] min-w-[320px] rounded-3xl border transition-all duration-200 ${isOver ? 'border-violet-400 ring-2 ring-violet-200 shadow-lg' : 'border-gray-200/80 shadow-sm'} bg-slate-50/80 backdrop-blur-sm`}
+      className={`w-[320px] min-w-[320px] rounded-xl border transition-all duration-200 ${isOver ? 'border-violet-400 ring-2 ring-violet-200 shadow-lg' : 'border-gray-200/80 shadow-sm'} bg-slate-50/80 backdrop-blur-sm`}
     >
       <div className="flex items-center justify-between gap-3 border-b border-gray-200/80 px-4 py-4">
         <div className="min-w-0">
@@ -40,7 +40,7 @@ export const CategoryColumn = ({ category, items = [] }) => {
                 />
               ))
             ) : (
-              <div className="rounded-2xl border border-dashed border-gray-300 bg-white/70 p-6 text-center">
+              <div className="rounded-xl border border-dashed border-gray-300 bg-white/70 p-6 text-center">
                 <p className="text-sm font-medium text-gray-700">Empty column</p>
                 <p className="mt-1 text-xs text-gray-500">Drop a card here or add a new one.</p>
               </div>
@@ -50,7 +50,7 @@ export const CategoryColumn = ({ category, items = [] }) => {
       </Card>
 
       <div className="px-4 pb-4">
-        <div className="w-full rounded-2xl border border-dashed border-gray-300 bg-white/90 px-4 py-3 text-center text-sm font-medium text-gray-500">
+        <div className="w-full rounded-xl border border-dashed border-gray-300 bg-white/90 px-4 py-3 text-center text-sm font-medium text-gray-500">
           Add cards from the top bar
         </div>
       </div>

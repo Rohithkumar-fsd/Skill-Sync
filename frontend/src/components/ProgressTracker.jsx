@@ -56,7 +56,7 @@ const ProgressTracker = ({ progress, phases }) => {
           transition={{ duration: 0.4, delay: 0.1 }}
           className="h-full"
         >
-          <Card className="h-full hover-lift bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
+          <Card className="h-full hover-lift bg-white dark:bg-card border border-gray-100 dark:border-border">
             <CardContent className="p-3 h-full flex items-center justify-center">
               <div className="flex flex-col items-center text-center gap-2">
                 <div className="p-2 bg-gray-900 dark:bg-white rounded-xl shadow-md">
@@ -66,7 +66,7 @@ const ProgressTracker = ({ progress, phases }) => {
                   <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">
                     Streak
                   </p>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-none">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-foreground leading-none">
                     {streak_days}
                   </h3>
                   <p className="text-[10px] text-gray-500 mt-0.5">Days</p>
@@ -82,7 +82,7 @@ const ProgressTracker = ({ progress, phases }) => {
           transition={{ duration: 0.4, delay: 0.2 }}
           className="h-full"
         >
-          <Card className="h-full hover-lift bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
+          <Card className="h-full hover-lift bg-white dark:bg-card border border-gray-100 dark:border-border">
             <CardContent className="p-3 h-full flex items-center justify-center">
               <div className="flex flex-col items-center text-center gap-2 w-full">
                 <div className="p-2 bg-blue-600 dark:bg-blue-500 rounded-xl shadow-md">
@@ -92,10 +92,10 @@ const ProgressTracker = ({ progress, phases }) => {
                   <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">
                     Progress
                   </p>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-none mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-foreground leading-none mb-2">
                     {percentage}%
                   </h3>
-                  <div className="w-full bg-gray-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-gray-100 dark:bg-accent rounded-full h-1.5 overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${percentage}%` }}
@@ -115,7 +115,7 @@ const ProgressTracker = ({ progress, phases }) => {
           transition={{ duration: 0.4, delay: 0.3 }}
           className="h-full"
         >
-          <Card className="h-full hover-lift bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
+          <Card className="h-full hover-lift bg-white dark:bg-card border border-gray-100 dark:border-border">
             <CardContent className="p-3 h-full flex items-center justify-center">
               <div className="flex flex-col items-center text-center gap-2">
                 <div className="p-2 bg-gray-900 dark:bg-white rounded-xl shadow-md">
@@ -125,7 +125,7 @@ const ProgressTracker = ({ progress, phases }) => {
                   <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">
                     Pace
                   </p>
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white leading-tight">
+                  <h3 className="text-base font-bold text-gray-900 dark:text-foreground leading-tight">
                     {pace.label}
                   </h3>
                 </div>
@@ -140,7 +140,7 @@ const ProgressTracker = ({ progress, phases }) => {
           transition={{ duration: 0.4, delay: 0.4 }}
           className="h-full"
         >
-          <Card className="h-full hover-lift bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
+          <Card className="h-full hover-lift bg-white dark:bg-card border border-gray-100 dark:border-border">
             <CardContent className="p-3 h-full flex items-center justify-center">
               <div className="flex flex-col items-center text-center gap-2">
                 <div className="p-2 bg-gray-900 dark:bg-white rounded-xl shadow-md">
@@ -150,7 +150,7 @@ const ProgressTracker = ({ progress, phases }) => {
                   <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">
                     Last Active
                   </p>
-                  <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-foreground leading-tight">
                     {last_activity_date ? new Date(last_activity_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Today'}
                   </h3>
                 </div>

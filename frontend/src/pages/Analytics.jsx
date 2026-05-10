@@ -3,7 +3,8 @@ import {
   BarChart3, CalendarDays, CheckCircle2, Clock3,
   Sparkles, TrendingUp, Target, Zap, ChevronDown
 } from 'lucide-react'
-import { LearningShell } from '../components/learning/LearningShell'
+import { AppShell } from '../components/layout/AppShell'
+import { PageHeader } from '../components/ui/PageHeader'
 import { useSkills } from '../contexts/SkillContext'
 import { useTasks } from '../contexts/TaskContext'
 import { weeklyReport } from '../services/aiService'
@@ -20,7 +21,7 @@ const MiniBar = ({ label, value, max, color }) => (
   <div className="space-y-1">
     <div className="flex justify-between text-xs">
       <span className="text-gray-600 dark:text-gray-400 truncate max-w-[140px]">{label}</span>
-      <span className="font-bold text-gray-900 dark:text-white ml-2">{value}%</span>
+      <span className="font-bold text-gray-900 dark:text-foreground ml-2">{value}%</span>
     </div>
     <div className="progress-track">
       <div
@@ -73,8 +74,8 @@ const StatWidget = ({ icon: Icon, label, value, color = 'indigo' }) => {
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <div className="text-2xl font-bold text-gray-900 dark:text-white">{value}</div>
-        <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mt-0.5">{label}</div>
+        <div className="text-2xl font-bold text-gray-900 dark:text-foreground">{value}</div>
+        <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-muted-foreground mt-0.5">{label}</div>
       </div>
     </div>
   )
@@ -101,9 +102,9 @@ const Analytics = () => {
     // Skills by progress buckets
     const buckets = {
       '0%':    skills.filter(s => (s.progress||0) === 0).length,
-      '1–33%': skills.filter(s => (s.progress||0) > 0  && (s.progress||0) <= 33).length,
-      '34–66%':skills.filter(s => (s.progress||0) > 33 && (s.progress||0) <= 66).length,
-      '67–99%':skills.filter(s => (s.progress||0) > 66 && (s.progress||0) < 100).length,
+      '1-33%': skills.filter(s => (s.progress||0) > 0  && (s.progress||0) <= 33).length,
+      '34-66%':skills.filter(s => (s.progress||0) > 33 && (s.progress||0) <= 66).length,
+      '67-99%':skills.filter(s => (s.progress||0) > 66 && (s.progress||0) < 100).length,
       '100%':  skills.filter(s => (s.progress||0) === 100).length,
     }
 
@@ -132,10 +133,12 @@ const Analytics = () => {
   }
 
   return (
-    <LearningShell
-      title="Analytics"
-      subtitle="Track your learning velocity and find patterns in your progress."
-    >
+    <AppShell>
+      <div className="page-container animate-fade-slide-in">
+        <PageHeader 
+          title="Analytics" 
+          subtitle="Track your learning velocity and find patterns in your progress." 
+        />
       <div className="space-y-6">
 
         {/* ── Stat row ─────────────────────────────────────────────────── */}
@@ -147,7 +150,7 @@ const Analytics = () => {
         </div>
 
         {/* ── Charts row ───────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_1fr_0.8fr] gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[1fr_1fr_0.8fr] gap-5">
 
           {/* Skills by Progress (bar chart) */}
           <div className="card-surface p-5">
@@ -189,7 +192,7 @@ const Analytics = () => {
                 <div className="relative shrink-0">
                   <DonutChart segments={donutSegments} size={120} thickness={20} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-xl font-bold text-gray-900 dark:text-white">{skills.length}</span>
+                    <span className="text-xl font-bold text-gray-900 dark:text-foreground">{skills.length}</span>
                     <span className="text-[10px] text-gray-400">total</span>
                   </div>
                 </div>
@@ -200,10 +203,10 @@ const Analytics = () => {
                         <div className="w-3 h-3 rounded-full" style={{ background: seg.color }} />
                         <span className="text-xs text-gray-600 dark:text-gray-400">{seg.label}</span>
                       </div>
-                      <span className="text-sm font-bold text-gray-900 dark:text-white">{seg.value}</span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-foreground">{seg.value}</span>
                     </div>
                   ))}
-                  <div className="pt-2 border-t border-gray-200 dark:border-zinc-800">
+                  <div className="pt-2 border-t border-gray-200 dark:border-border">
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-500">Avg Progress</span>
                       <span className="font-bold text-indigo-600 dark:text-indigo-400">{metrics.avgProgress}%</span>
@@ -222,13 +225,13 @@ const Analytics = () => {
                 <div key={range} className="flex items-center justify-between">
                   <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">{range}</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-24 h-2 rounded-full bg-gray-100 dark:bg-zinc-800 overflow-hidden">
+                    <div className="w-24 h-2 rounded-full bg-gray-100 dark:bg-accent overflow-hidden">
                       <div
                         className="h-full rounded-full bg-indigo-500 transition-all duration-700"
                         style={{ width: skills.length ? `${(count/skills.length)*100}%` : '0%' }}
                       />
                     </div>
-                    <span className="text-xs font-bold text-gray-900 dark:text-white w-4 text-right">{count}</span>
+                    <span className="text-xs font-bold text-gray-900 dark:text-foreground w-4 text-right">{count}</span>
                   </div>
                 </div>
               ))}
@@ -246,7 +249,7 @@ const Analytics = () => {
             <div key={item.label} className="card-surface p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{item.label}</span>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">{item.value}</span>
+                <span className="text-xl font-bold text-gray-900 dark:text-foreground">{item.value}</span>
               </div>
               <div className="progress-track">
                 <div className="h-full rounded-full transition-all duration-700"
@@ -263,7 +266,7 @@ const Analytics = () => {
         <div className="card-surface p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="section-title flex items-center gap-2">
-              <Sparkles className="w-4.5 h-4.5 text-violet-500" style={{width:18,height:18}} />
+              <Sparkles className="text-violet-500" style={{width:18,height:18}} />
               AI Weekly Review
             </h2>
             <button
@@ -274,14 +277,14 @@ const Analytics = () => {
               {aiLoading ? (
                 <span className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-                  Generating…
+                  Generating...
                 </span>
               ) : 'Generate Report'}
             </button>
           </div>
 
           {result ? (
-            <div className="bg-gray-50 dark:bg-zinc-800 rounded-xl p-4">
+            <div className="bg-gray-50 dark:bg-accent rounded-xl p-4">
               <div className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap ${!expanded ? 'line-clamp-6' : ''}`}>
                 {result}
               </div>
@@ -295,13 +298,14 @@ const Analytics = () => {
             </div>
           ) : (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Click "Generate Report" to get an AI-powered summary of your week — what you completed, what you missed, and where to improve.
+              Click "Generate Report" to get an AI-powered summary of your week, what you completed, what you missed, and where to improve.
             </p>
           )}
         </div>
 
       </div>
-    </LearningShell>
+      </div>
+    </AppShell>
   )
 }
 

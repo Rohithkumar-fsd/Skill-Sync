@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { LearningShell } from '../components/learning/LearningShell'
+import { AppShell } from '../components/layout/AppShell'
+import { PageHeader } from '../components/ui/PageHeader'
 import { AIActionPanel } from '../components/learning/AIActionPanel'
 import { Target, Zap, Briefcase, Map, ArrowRight } from 'lucide-react'
 import { skillGap, pathOptimize } from '../services/aiService'
@@ -35,21 +36,23 @@ const Goals = () => {
   }
 
   return (
-    <LearningShell
-      title="Goals & Career Path"
-      subtitle="Define your target role and let AI map out the exact skills you need to learn to get there."
-    >
+    <AppShell>
+      <div className="page-container animate-fade-slide-in">
+        <PageHeader 
+          title="Goals & Career Path" 
+          subtitle="Define your target role and let AI map out the exact skills you need to learn to get there." 
+        />
       <div className="grid gap-6 xl:grid-cols-[1fr_1.2fr]">
         
         {/* Left Panel: Inputs */}
         <div className="space-y-6">
           <div className="card-surface p-6">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center mb-5">
+            <div className="w-12 h-12 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center mb-5">
               <Target className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
             </div>
             
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Target Role</h2>
-            <p className="text-sm text-gray-500 dark:text-zinc-400 mb-6 leading-relaxed">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-foreground mb-2">Target Role</h2>
+            <p className="text-sm text-gray-500 dark:text-muted-foreground mb-6 leading-relaxed">
               What role are you aiming for? We'll compare your current {skills.length} tracked skills against the industry standard for this role.
             </p>
 
@@ -84,12 +87,12 @@ const Goals = () => {
           </div>
 
           <div className="card-surface p-6">
-            <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-900/30 flex items-center justify-center mb-5">
+            <div className="w-12 h-12 rounded-lg bg-violet-50 dark:bg-violet-900/30 flex items-center justify-center mb-5">
               <Map className="w-6 h-6 text-violet-600 dark:text-violet-400" />
             </div>
             
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Optimize Path</h2>
-            <p className="text-sm text-gray-500 dark:text-zinc-400 mb-6 leading-relaxed">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-foreground mb-2">Optimize Path</h2>
+            <p className="text-sm text-gray-500 dark:text-muted-foreground mb-6 leading-relaxed">
               Already know what you need to learn? Let AI analyze your {skills.filter(s => s.status !== 'COMPLETED').length} active skills and suggest the most efficient order to tackle them.
             </p>
 
@@ -103,10 +106,7 @@ const Goals = () => {
           </div>
 
           {/* Upsell for full resume scanner */}
-          <div className="relative overflow-hidden rounded-2xl p-6 bg-gray-900">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-20 -translate-y-1/2 translate-x-1/3"
-              style={{ background: 'radial-gradient(circle, #a78bfa, transparent)' }} />
-            
+          <div className="relative overflow-hidden rounded-xl p-6 bg-zinc-950 border border-zinc-800">
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-2 text-white">
                 <Zap className="w-5 h-5 text-violet-400" />
@@ -129,13 +129,13 @@ const Goals = () => {
         <div className="h-full">
           {result ? (
             <div className="card-surface p-6 h-full border-indigo-200 dark:border-indigo-900/50 shadow-lg shadow-indigo-500/5">
-              <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-100 dark:border-border">
                 {result.type === 'gap' ? (
                   <Target className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 ) : (
                   <Map className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                 )}
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-foreground">
                   {result.type === 'gap' ? `Gap Analysis: ${targetRole}` : 'Optimized Learning Path'}
                 </h2>
               </div>
@@ -145,12 +145,12 @@ const Goals = () => {
               </div>
             </div>
           ) : (
-            <div className="card-surface h-full min-h-[400px] flex flex-col items-center justify-center p-8 text-center bg-gray-50/50 dark:bg-zinc-900/50 border-dashed border-2">
-              <div className="w-16 h-16 rounded-3xl bg-white dark:bg-zinc-800 shadow-sm flex items-center justify-center mb-4">
+            <div className="card-surface h-full min-h-[400px] flex flex-col items-center justify-center p-8 text-center bg-gray-50/50 dark:bg-card/50 border-dashed border-2">
+              <div className="w-16 h-16 rounded-xl bg-white dark:bg-accent shadow-sm flex items-center justify-center mb-4">
                 <Zap className="w-8 h-8 text-indigo-400" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Awaiting Instructions</h3>
-              <p className="text-sm text-gray-500 dark:text-zinc-400 max-w-sm">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-foreground mb-2">Awaiting Instructions</h3>
+              <p className="text-sm text-gray-500 dark:text-muted-foreground max-w-sm">
                 Enter a target role on the left or click "Optimize Learning Path" to generate your AI-powered career roadmap.
               </p>
             </div>
@@ -158,7 +158,8 @@ const Goals = () => {
         </div>
         
       </div>
-    </LearningShell>
+      </div>
+    </AppShell>
   )
 }
 

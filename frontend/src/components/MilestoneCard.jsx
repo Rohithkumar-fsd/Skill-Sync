@@ -46,7 +46,7 @@ const MilestoneCard = ({ milestone, phaseIndex, milestoneIndex, onComplete, isCo
             transition={{ duration: 0.3, delay: milestoneIndex * 0.1 }}
             className={`p-5 rounded-xl border-2 transition-all duration-300 ${isCompleted
                     ? 'bg-green-50 dark:bg-green-500/10 border-green-300 dark:border-green-600'
-                    : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 hover:border-indigo-300 dark:hover:border-indigo-600'
+                    : 'bg-white dark:bg-accent border-gray-200 dark:border-border hover:border-indigo-300 dark:hover:border-indigo-600'
                 }`}
         >
             {/* Header */}
@@ -68,7 +68,7 @@ const MilestoneCard = ({ milestone, phaseIndex, milestoneIndex, onComplete, isCo
                             )}
                         </div>
                         <div className="flex-1">
-                            <h4 className="font-bold text-gray-900 dark:text-white mb-1">{name}</h4>
+                            <h4 className="font-bold text-gray-900 dark:text-foreground mb-1">{name}</h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
                         </div>
                     </div>
@@ -96,14 +96,14 @@ const MilestoneCard = ({ milestone, phaseIndex, milestoneIndex, onComplete, isCo
                                 href={resource.url || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group block p-3 rounded-lg bg-gray-50 dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                                className="group block p-3 rounded-lg bg-gray-50 dark:bg-card hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
                             >
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 rounded-lg ${getResourceColor(resource.type)}`}>
                                         {getResourceIcon(resource.type)}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-medium text-sm text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                                        <p className="font-medium text-sm text-gray-900 dark:text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
                                             {resource.title}
                                         </p>
                                         <div className="flex items-center gap-2 mt-1">

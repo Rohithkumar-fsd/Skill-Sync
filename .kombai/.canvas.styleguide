@@ -1,0 +1,68 @@
+{
+  "guides": [
+    {
+      "id": "style_4ea186b4f8e3",
+      "name": "LevelUP Premium - Deep Nebula",
+      "theme": {
+        "seedColor": "#011F5B",
+        "colorThemeName": "Deep Nebula",
+        "palette": {
+          "primary": "#00FFFF",
+          "secondary": "#8A2BE2",
+          "tertiary": "#1E2952",
+          "neutral": "#FFFFFF"
+        },
+        "fonts": {
+          "headline": {
+            "family": "Inter",
+            "url": "https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap"
+          },
+          "body": {
+            "family": "DM Sans",
+            "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap"
+          },
+          "label": {
+            "family": "Inter",
+            "url": "https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap"
+          }
+        },
+        "cornerRadius": "large"
+      },
+      "designInstructions": "### Visual Language: Glassmorphism & Depth\n- **Surface Treatment**: Use a mix of deep navy (#011F5B) and space indigo (#1E2952) for backgrounds. Cards should feature glassmorphism (#glassmorphism) with a 12px blur, subtle 10% white borders, and 60% opacity backgrounds to create layering.\n- **Color Accents**: Use Neon Cyan (#00FFFF) for primary progress indicators, success states, and glowing accents. Use Blue Violet (#8A2BE2) for secondary actions and subtle background glows (#gradient-mesh).\n- **Typography Hierarchy**: Use 'Inter' for bold, technical headings and 'DM Sans' for clean, readable body text. Implement uppercase tracking (0.18em) for eyebrow labels to give a professional, engineered look.\n\n### Layout & Spacing\n- **Grid System**: Use a structured sidebar-based layout (#sidebar-dashboard) with a focus on information density without clutter. Implement a balanced spacing rhythm with generous 2rem gaps between main sections.\n- **KPI Floating**: Overlap key metric cards over main content areas (#kpi-overlay) to create a dynamic, modern feel.\n\n### Component Styling\n- **Interactive Elements**: Buttons should have a high-contrast glowing effect (#pulse-glow) on hover. Use 18px size for sidebar icons to ensure visual balance.\n- **Data Visualization**: Charts should be radial (#radial-chart) or feature glowing comparison bars (#comparison-bars) in cyan and violet.\n- **Borders**: Avoid solid flat borders. Use multi-layer shadows (#simple-elevation) or subtle gradient strokes to define card edges.\n\n### Imagery & Iconography\n- **Visual Assets**: Use abstract 3D fluid shapes on dark backgrounds for a futuristic feel. Iconography should be minimal and technical (Tabler Icons).\n- **Animation Cues**: While the canvas is static, the design should imply smooth transitions with clear hover state definitions in the layout.",
+      "created": "2026-05-09T12:13:44.545815+00:00",
+      "modified": "2026-05-09T12:13:44.545815+00:00"
+    },
+    {
+      "id": "style_3ad0fb3387cc",
+      "name": "LevelUP - Monochrome Elite",
+      "theme": {
+        "seedColor": "#000000",
+        "colorThemeName": "Monochrome Elite",
+        "palette": {
+          "primary": "#000000",
+          "secondary": "#FFFFFF",
+          "tertiary": "#F5F5F5",
+          "neutral": "#000000"
+        },
+        "fonts": {
+          "headline": {
+            "family": "Inter",
+            "url": "https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap"
+          },
+          "body": {
+            "family": "DM Sans",
+            "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap"
+          },
+          "label": {
+            "family": "Inter",
+            "url": "https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap"
+          }
+        },
+        "cornerRadius": "none"
+      },
+      "designInstructions": "### Visual Language: Brutalist Monochrome\n- **Aesthetic**: High-contrast, minimalist, and brutalist. Use absolute black (#000000) and pure white (#FFFFFF).\n- **Surface Treatment**: Replace glassmorphism with solid, clean-edged cards. Use subtle 1px black borders on white backgrounds.\n- **Accents**: No color accents. Use bold typography, thick borders, and solid fills to create hierarchy.\n- **Imagery**: Use grayscale or high-contrast black and white photography. Abstract geometric patterns are preferred over fluid shapes.\n\n### Typography\n- **Hierarchy**: Extremely clear and bold. Large headings should feel like architectural elements.\n- **Tracking**: Tighten tracking for headlines to create a dense, powerful look.\n\n### Layout\n- **Borders**: Use sharp corners (cornerRadius: none) for a professional, Swiss-style industrial feel.\n- **Spacing**: Use \"negative space\" as a design element. Large areas of pure white to separate sections.",
+      "created": "2026-05-09T12:16:27.061185+00:00",
+      "modified": "2026-05-09T12:16:27.061185+00:00"
+    }
+  ]
+}

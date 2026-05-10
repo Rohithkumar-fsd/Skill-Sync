@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Linkedin, Compass, Moon, Sun } from 'lucide-react';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
@@ -7,8 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './car
 import { Input } from './input';
 import { Button } from './button';
 import { Label } from './label';
-import { useTheme } from '../../contexts/ThemeContext';
-import axios from 'axios';
 
 const GoogleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 48 48">
@@ -28,7 +26,6 @@ export const SignUp = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -82,47 +79,33 @@ export const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center font-sans w-full bg-gray-50 dark:bg-black p-4 sm:p-6 lg:p-8 relative">
-      <button
-        onClick={toggleTheme}
-        className="fixed top-6 right-6 z-[9999] p-3 rounded-full bg-white dark:bg-zinc-800 text-gray-900 dark:text-white border-2 border-gray-300 dark:border-zinc-600 shadow-2xl hover:scale-110 transition-all duration-200"
-        aria-label="Toggle dark mode"
-        title="Toggle dark mode"
-      >
-        {theme === 'dark' ? (
-          <Sun className="h-6 w-6 text-yellow-400" />
-        ) : (
-          <Moon className="h-6 w-6 text-indigo-600" />
-        )}
-      </button>
-
-      <div className="mb-6 sm:mb-8 text-center animate-fade-in">
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="p-2.5 bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-800">
-            <Compass className="w-6 h-6 sm:w-8 sm:h-8 text-black dark:text-white" />
+    <div className="min-h-screen flex flex-col items-center justify-center font-sans w-full bg-white p-4 sm:p-6 lg:p-8">
+      <div className="mb-8 text-center animate-fade-in">
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center shadow-2xl border border-white/10">
+            <Zap className="w-6 h-6 fill-white stroke-white" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">LevelUP</h1>
         </div>
-        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm font-medium">Your personalized learning journey</p>
+        <p className="text-gray-600 text-xs sm:text-sm font-medium">Your personalized learning journey</p>
       </div>
 
-      <Card className="w-full max-w-md shadow-xl border-2 border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
-        <CardHeader className="space-y-1 text-center pb-2">
-          <CardTitle className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Create an account</CardTitle>
-          <CardDescription className="text-gray-500 dark:text-gray-300 font-medium">
+      <Card className="w-full max-w-md shadow-lg border border-gray-200 bg-white">
+        <CardHeader className="space-y-2 text-center pb-4">
+          <CardTitle className="text-2xl font-bold tracking-tight text-black">Create an account</CardTitle>
+          <CardDescription className="text-gray-600 font-medium">
             Enter your email below to create your account
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg p-3 text-sm font-medium">
+            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm font-medium">
               {error}
             </div>
           )}
 
           <form className="space-y-4" onSubmit={handleSignUp}>
             <div className="space-y-2">
-              <Label htmlFor="email" className="dark:text-gray-200">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -130,11 +113,11 @@ export const SignUp = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 dark:text-white dark:placeholder-gray-400 focus:border-black dark:focus:border-indigo-500 focus:ring-black dark:focus:ring-indigo-500"
+                className="bg-white border-gray-200 text-black placeholder-gray-400 focus:border-black focus:ring-black"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="dark:text-gray-200">Password</Label>
+              <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -144,19 +127,19 @@ export const SignUp = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 dark:text-white dark:placeholder-gray-400 focus:border-black dark:focus:border-indigo-500 focus:ring-black dark:focus:ring-indigo-500 pr-10"
+                  className="bg-white border-gray-200 text-black placeholder-gray-400 focus:border-black focus:ring-black pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-black dark:text-gray-400 dark:hover:text-white"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600 hover:text-black transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="dark:text-gray-200">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -165,12 +148,12 @@ export const SignUp = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 dark:text-white dark:placeholder-gray-400 focus:border-black dark:focus:border-indigo-500 focus:ring-black dark:focus:ring-indigo-500 pr-10"
+                  className="bg-white border-gray-200 text-black placeholder-gray-400 focus:border-black focus:ring-black pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-black dark:text-gray-400 dark:hover:text-white"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600 hover:text-black transition-colors"
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -178,7 +161,7 @@ export const SignUp = () => {
             </div>
             <Button
               type="submit"
-              className="w-full bg-black hover:bg-gray-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white shadow-md"
+              className="w-full bg-black hover:bg-gray-900 text-white shadow-md font-semibold"
               disabled={loading}
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
@@ -187,10 +170,10 @@ export const SignUp = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-200 dark:border-zinc-700" />
+              <span className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-zinc-900 px-2 text-gray-400 dark:text-gray-500 font-semibold">Or continue with</span>
+              <span className="bg-white px-2 text-gray-600 font-semibold">Or continue with</span>
             </div>
           </div>
 
@@ -199,15 +182,15 @@ export const SignUp = () => {
             type="button"
             onClick={handleGoogleSignUp}
             disabled={loading}
-            className="w-full bg-white dark:bg-transparent border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white"
+            className="w-full bg-white border-gray-200 text-black hover:bg-gray-50 hover:text-black"
           >
             <GoogleIcon />
             <span className="ml-2">Google</span>
           </Button>
 
-          <div className="text-center text-sm text-gray-500 dark:text-gray-400 font-medium mt-4">
+          <div className="text-center text-sm text-gray-600 font-medium mt-4">
             Already have an account?{' '}
-            <button onClick={handleSignIn} className="text-black dark:text-indigo-400 hover:text-gray-700 dark:hover:text-indigo-300 font-bold hover:underline">
+            <button onClick={handleSignIn} className="text-black hover:text-gray-800 font-bold hover:underline">
               Sign in
             </button>
           </div>

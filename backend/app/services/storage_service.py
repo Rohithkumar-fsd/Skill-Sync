@@ -26,54 +26,88 @@ def save_career_analysis(
 
 
 def save_active_roadmap(user_id: str, career_decision: dict, roadmap: dict, preserve_progress: bool = False):
-    existing_data = None
-    if preserve_progress:
-        existing_data = get_active_roadmap(user_id)
+    """
+    Save the active roadmap for a user to Firestore.
     
-    if "roadmap" in roadmap:
-        for idx, phase in enumerate(roadmap["roadmap"]):
-            if existing_data and preserve_progress:
-                old_roadmap = existing_data.get("learning_roadmap", {}).get("roadmap", [])
-                if idx < len(old_roadmap):
-                    old_phase = old_roadmap[idx]
-                    if old_phase.get("status") == "completed":
-                        phase["status"] = "completed"
-                        phase["completed_at"] = old_phase.get("completed_at")
+    Args:
+        user_id: Firebase user ID
+        career_decision: Career analysis with title, reasoning, confidence, etc.
+        roadmap: Roadmap structure with phases, milestones, resources
+        preserve_progress: If True, preserves completion status from existing roadmap
+    
+    Returns:
+        True if successful
+    """
+    try:
+        print(f"Saving roadmap for user {user_id}...")
+        
+        existing_data = None
+        if preserve_progress:
+            existing_data = get_active_roadmap(user_id)
+            print(f"Preserve progress enabled. Found existing roadmap: {existing_data is not None}")
+        
+        # Ensure all phases have status
+        if "roadmap" in roadmap:
+            for idx, phase in enumerate(roadmap["roadmap"]):
+                if existing_data and preserve_progress:
+                    old_roadmap = existing_data.get("learning_roadmap", {}).get("roadmap", [])
+                    if idx < len(old_roadmap):
+                        old_phase = old_roadmap[idx]
+                        if old_phase.get("status") == "completed":
+                            phase["status"] = "completed"
+                            phase["completed_at"] = old_phase.get("completed_at")
+                            print(f"  Phase {idx+1} preserved as completed")
+                        else:
+                            phase["status"] = "pending"
+                            phase["completed_at"] = None
                     else:
                         phase["status"] = "pending"
                         phase["completed_at"] = None
                 else:
                     phase["status"] = "pending"
                     phase["completed_at"] = None
-            else:
-                phase["status"] = "pending"
-                phase["completed_at"] = None
-    
-    if existing_data and preserve_progress:
-        completed_count = sum(1 for p in roadmap.get("roadmap", []) if p.get("status") == "completed")
-        progress_data = {
-            "completed_phases": completed_count,
-            "total_phases": len(roadmap.get("roadmap", [])),
-            "streak_days": existing_data.get("progress", {}).get("streak_days", 0),
-            "last_activity_date": existing_data.get("progress", {}).get("last_activity_date")
-        }
-    else:
-        progress_data = {
-            "completed_phases": 0,
-            "total_phases": len(roadmap.get("roadmap", [])),
-            "streak_days": 0,
-            "last_activity_date": None
+        
+        # Build progress tracking
+        if existing_data and preserve_progress:
+            completed_count = sum(1 for p in roadmap.get("roadmap", []) if p.get("status") == "completed")
+            progress_data = {
+                "completed_phases": completed_count,
+                "total_phases": len(roadmap.get("roadmap", [])),
+                "streak_days": existing_data.get("progress", {}).get("streak_days", 0),
+                "last_activity_date": existing_data.get("progress", {}).get("last_activity_date")
+            }
+            print(f"  Progress preserved: {completed_count}/{len(roadmap.get('roadmap', []))} phases completed")
+        else:
+            progress_data = {
+                "completed_phases": 0,
+                "total_phases": len(roadmap.get("roadmap", [])),
+                "streak_days": 0,
+                "last_activity_date": None
+            }
+            print(f"  Fresh progress: 0/{len(roadmap.get('roadmap', []))} phases")
+
+        data = {
+            "career_decision": career_decision,
+            "learning_roadmap": roadmap,
+            "progress": progress_data,
+            "updated_at": datetime.utcnow()
         }
 
-    data = {
-        "career_decision": career_decision,
-        "learning_roadmap": roadmap,
-        "progress": progress_data,
-        "updated_at": datetime.utcnow()
-    }
-
-    db.collection("users").document(user_id).collection("active_roadmap").document("current").set(data)
-    return True
+        # Save to Firestore
+        doc_ref = db.collection("users").document(user_id).collection("active_roadmap").document("current")
+        doc_ref.set(data)
+        
+        print(f"Roadmap saved successfully!")
+        print(f"   Path: users/{user_id}/active_roadmap/current")
+        print(f"   Career: {career_decision.get('career', 'N/A')}")
+        print(f"   Phases: {len(roadmap.get('roadmap', []))}")
+        print(f"   Duration: {roadmap.get('duration_months', 0)} months")
+        
+        return True
+        
+    except Exception as e:
+        print(f"Error saving roadmap: {str(e)}")
+        raise
 
 
 def get_active_roadmap(user_id: str):

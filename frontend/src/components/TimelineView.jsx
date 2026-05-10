@@ -32,19 +32,19 @@ const TimelineView = ({ roadmap, progress, onMilestoneComplete, onToggleView }) 
             transition={{ duration: 0.4 }}
             className="w-full"
         >
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden">
+            <div className="bg-white dark:bg-card rounded-2xl border border-gray-200 dark:border-border overflow-hidden">
 
                 {/* Header */}
-                <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-zinc-800">
+                <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-border">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-foreground">
                                 Learning Timeline
                             </h3>
                             {onToggleView && (
                                 <button
                                     onClick={onToggleView}
-                                    className="px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors"
+                                    className="px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-accent text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors"
                                 >
                                     Switch View
                                 </button>
@@ -75,8 +75,8 @@ const TimelineView = ({ roadmap, progress, onMilestoneComplete, onToggleView }) 
                                 <div className={`rounded-xl border overflow-hidden ${isCompleted
                                         ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/40'
                                         : isCurrent
-                                            ? 'bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-600'
-                                            : 'bg-gray-50 dark:bg-zinc-800/50 border-gray-200 dark:border-zinc-700'
+                                            ? 'bg-white dark:bg-accent border-gray-300 dark:border-zinc-600'
+                                            : 'bg-gray-50 dark:bg-accent/50 border-gray-200 dark:border-border'
                                     }`}>
 
                                     {/* Header */}
@@ -90,7 +90,7 @@ const TimelineView = ({ roadmap, progress, onMilestoneComplete, onToggleView }) 
                                                 <div className="flex items-center gap-2 flex-wrap">
                                                     <h4 className={`font-semibold ${isCompleted
                                                             ? 'text-emerald-800 dark:text-emerald-300'
-                                                            : 'text-gray-900 dark:text-white'
+                                                            : 'text-gray-900 dark:text-foreground'
                                                         }`}>
                                                         {phase.phase || phase.phase_name}
                                                     </h4>

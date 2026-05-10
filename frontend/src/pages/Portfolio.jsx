@@ -1,0 +1,373 @@
+import React, { useMemo, useState } from 'react'
+import { Download, FileJson, FileText, Award, Zap, TrendingUp, Calendar } from 'lucide-react'
+import { AppShell } from '../components/layout/AppShell'
+import { PageHeader } from '../components/ui/PageHeader'
+import { useSkills } from '../contexts/SkillContext'
+import { motion } from 'framer-motion'
+
+const Portfolio = () => {
+  const { categories, skills } = useSkills()
+  const [exportFormat, setExportFormat] = useState(null)
+  const [filterCategory, setFilterCategory] = useState('all')
+
+  // Group skills by category and status
+  const portfolioData = useMemo(() => {
+    const grouped = {}
+    categories.forEach(cat => {
+      grouped[cat.id] = {
+        category: cat,
+        skills: skills.filter(s => s.categoryId === cat.id),
+      }
+    })
+    return grouped
+  }, [categories, skills])
+
+  // Filter skills based on selected category
+  const filteredData = useMemo(() => {
+    if (filterCategory === 'all') {
+      return Object.values(portfolioData)
+    }
+    return Object.values(portfolioData).filter(g => g.category.id === filterCategory)
+  }, [portfolioData, filterCategory])
+
+  // Calculate portfolio stats
+  const stats = useMemo(() => {
+    const totalSkills = skills.length
+    const completedSkills = skills.filter(s => s.status === 'COMPLETED').length
+    const inProgressSkills = skills.filter(s => s.status === 'IN_PROGRESS').length
+    const avgProgress = totalSkills > 0 ? Math.round(skills.reduce((acc, s) => acc + (s.progress || 0), 0) / totalSkills) : 0
+
+    return { totalSkills, completedSkills, inProgressSkills, avgProgress }
+  }, [skills])
+
+  // Export as JSON
+  const handleExportJSON = () => {
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      stats,
+      categories: categories.map(cat => ({
+        name: cat.name,
+        description: cat.description,
+        skills: skills
+          .filter(s => s.categoryId === cat.id)
+          .map(s => ({
+            name: s.name,
+            status: s.status,
+            progress: s.progress,
+            priority: s.priority,
+            description: s.description,
+            subskills: s.subskills || [],
+          })),
+      })),
+    }
+
+    const dataStr = JSON.stringify(exportData, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `Portfolio_${new Date().toISOString().split('T')[0]}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+    setExportFormat(null)
+  }
+
+  // Export as PDF (simple HTML-based approach)
+  const handleExportPDF = () => {
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Professional Skills Portfolio</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; color: #000; }
+          h1 { font-size: 24px; margin-bottom: 5px; }
+          .date { font-size: 12px; color: #666; margin-bottom: 20px; }
+          h2 { font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 10px; margin-top: 20px; }
+          .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          .stats-table th, .stats-table td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+          .stats-table th { background: #000; color: white; }
+          .skill-item { page-break-inside: avoid; margin-bottom: 15px; padding: 10px; border-left: 3px solid #000; }
+          .skill-name { font-weight: bold; font-size: 14px; }
+          .skill-meta { font-size: 12px; color: #666; margin-top: 5px; }
+          .skill-progress { width: 100%; height: 8px; background: #ddd; margin-top: 5px; border-radius: 4px; overflow: hidden; }
+          .skill-progress-bar { height: 100%; background: #000; }
+          .category-section { margin-bottom: 30px; }
+        </style>
+      </head>
+      <body>
+        <h1>Professional Skills Portfolio</h1>
+        <p class="date">Exported on ${new Date().toLocaleDateString()}</p>
+        
+        <h2>Portfolio Summary</h2>
+        <table class="stats-table">
+          <tr><th>Metric</th><th>Value</th></tr>
+          <tr><td>Total Skills</td><td>${stats.totalSkills}</td></tr>
+          <tr><td>Completed Skills</td><td>${stats.completedSkills}</td></tr>
+          <tr><td>In Progress</td><td>${stats.inProgressSkills}</td></tr>
+          <tr><td>Average Progress</td><td>${stats.avgProgress}%</td></tr>
+        </table>
+
+        ${categories.map(category => {
+          const categorySkills = skills.filter(s => s.categoryId === category.id)
+          if (categorySkills.length === 0) return ''
+          return `
+            <div class="category-section">
+              <h2>${category.name}</h2>
+              ${category.description ? `<p>${category.description}</p>` : ''}
+              ${categorySkills.map(skill => `
+                <div class="skill-item">
+                  <div class="skill-name">${skill.name}</div>
+                  <div class="skill-meta">
+                    Status: ${skill.status.replace('_', ' ')} | Priority: ${skill.priority} | Progress: ${skill.progress || 0}%
+                  </div>
+                  ${skill.description ? `<p style="font-size: 12px; margin: 5px 0;">${skill.description}</p>` : ''}
+                  <div class="skill-progress">
+                    <div class="skill-progress-bar" style="width: ${skill.progress || 0}%"></div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `
+        }).join('')}
+      </body>
+      </html>
+    `
+
+    const element = document.createElement('a')
+    element.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent)
+    element.download = `Portfolio_${new Date().toISOString().split('T')[0]}.html`
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
+    setExportFormat(null)
+  }
+
+  return (
+    <AppShell>
+      <div className="page-container animate-fade-slide-in">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <PageHeader
+              title="Portfolio"
+              subtitle="Showcase your skills, track certifications, and monitor your professional growth."
+            />
+          </div>
+          <div className="flex gap-2">
+            <div className="relative group">
+              <button className="btn-primary text-xs flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                Export
+              </button>
+              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-20">
+                <button
+                  onClick={handleExportJSON}
+                  className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-200"
+                >
+                  <FileJson className="w-4 h-4" />
+                  Export as JSON
+                </button>
+                <button
+                  onClick={handleExportPDF}
+                  className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <FileText className="w-4 h-4" />
+                  Export as PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Portfolio Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <motion.div
+            className="stat-card"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500">Total Skills</p>
+                <p className="text-2xl font-bold text-black mt-1">{stats.totalSkills}</p>
+              </div>
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Zap className="w-6 h-6 text-gray-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="stat-card"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500">Completed</p>
+                <p className="text-2xl font-bold text-black mt-1">{stats.completedSkills}</p>
+              </div>
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Award className="w-6 h-6 text-gray-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="stat-card"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500">In Progress</p>
+                <p className="text-2xl font-bold text-black mt-1">{stats.inProgressSkills}</p>
+              </div>
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-gray-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="stat-card"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500">Avg Progress</p>
+                <p className="text-2xl font-bold text-black mt-1">{stats.avgProgress}%</p>
+              </div>
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-gray-600" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Category Filter */}
+        <div className="mb-6 flex gap-2 flex-wrap">
+          <button
+            onClick={() => setFilterCategory('all')}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              filterCategory === 'all'
+                ? 'bg-black text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            All Skills
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setFilterCategory(cat.id)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                filterCategory === cat.id
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Skills Grid by Category */}
+        <div className="space-y-8">
+          {filteredData.length === 0 ? (
+            <div className="empty-state py-16">
+              <div className="empty-state-icon bg-gray-100 text-gray-400">
+                <Award className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mt-4">No skills yet</h3>
+              <p className="text-sm text-gray-500 mt-2 max-w-sm mb-6">
+                Start building your portfolio by adding skills in the Skills tab or through the AI Skill Gap Analyzer.
+              </p>
+            </div>
+          ) : (
+            filteredData.map((group, idx) => (
+              <motion.div
+                key={group.category.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: idx * 0.1 }}
+              >
+                <div className="mb-6">
+                  <h2 className="text-lg font-bold text-black mb-2">{group.category.name}</h2>
+                  {group.category.description && (
+                    <p className="text-sm text-gray-600 mb-4">{group.category.description}</p>
+                  )}
+
+                  {/* Skills in this category */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {group.skills.map((skill, skillIdx) => (
+                      <motion.div
+                        key={skill.id}
+                        className="bg-white border border-gray-200 rounded-[16px] p-4 hover:shadow-md transition-shadow"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: skillIdx * 0.05 }}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="font-bold text-black text-sm">{skill.name}</h3>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {skill.status.replace('_', ' ')}
+                            </p>
+                          </div>
+                          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                            skill.priority === 'HIGH'
+                              ? 'bg-red-50 text-red-700'
+                              : skill.priority === 'MEDIUM'
+                              ? 'bg-amber-50 text-amber-700'
+                              : 'bg-green-50 text-green-700'
+                          }`}>
+                            {skill.priority}
+                          </span>
+                        </div>
+
+                        {skill.description && (
+                          <p className="text-xs text-gray-600 mb-3 line-clamp-2">
+                            {skill.description}
+                          </p>
+                        )}
+
+                        {/* Progress bar */}
+                        <div className="mb-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-gray-600">Progress</span>
+                            <span className="text-xs font-bold text-black">{skill.progress || 0}%</span>
+                          </div>
+                          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-black transition-all duration-300"
+                              style={{ width: `${skill.progress || 0}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Subskills count */}
+                        {skill.subskills && skill.subskills.length > 0 && (
+                          <div className="text-xs text-gray-500">
+                            {skill.subskills.filter(s => s.done).length} / {skill.subskills.length} subskills completed
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
+      </div>
+    </AppShell>
+  )
+}
+
+export default Portfolio

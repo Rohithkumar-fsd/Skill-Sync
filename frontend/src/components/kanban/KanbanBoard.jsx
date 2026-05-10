@@ -8,7 +8,8 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { Plus, Loader2 } from 'lucide-react'
-import { LearningShell } from '../learning/LearningShell'
+import { AppShell } from '../layout/AppShell'
+import { PageHeader } from '../ui/PageHeader'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -232,32 +233,35 @@ const KanbanBoard = () => {
   const handleDragCancel = () => setActiveSkill(null)
 
   return (
-    <LearningShell
-      title="Category Board"
-      subtitle="Drag cards between category columns and keep your learning plan organized."
-    >
-      <div className="rounded-3xl border border-gray-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm">
+    <AppShell>
+      <div className="page-container animate-fade-slide-in">
+      <PageHeader
+        title="Category Board"
+        subtitle="Drag cards between category columns and keep your learning plan organized."
+      />
+
+      <div className="rounded-xl border border-gray-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-border dark:bg-card/80">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-violet-600">Board</p>
-            <h2 className="mt-2 text-2xl font-bold text-gray-900">Kanban-style learning board</h2>
-            <p className="mt-2 text-sm text-gray-500">{totalCards} cards across {normalizedCategories.length} categories</p>
+            <h2 className="mt-2 text-xl font-bold text-gray-900 dark:text-foreground">Kanban-style learning board</h2>
+            <p className="mt-2 text-sm text-gray-500 dark:text-muted-foreground">{totalCards} cards across {normalizedCategories.length} categories</p>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[1.1fr_1.1fr_auto]">
-            <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 dark:border-border dark:bg-background">
               <Input
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
                 placeholder="New category"
                 className="border-0 bg-transparent px-0 focus-visible:ring-0"
               />
-              <Button type="button" className="rounded-full" onClick={() => handleAddCategory()}>
+              <Button type="button" className="rounded-lg" onClick={() => handleAddCategory()}>
                 <Plus className="mr-2 h-4 w-4" /> Add category
               </Button>
             </div>
 
-            <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 dark:border-border dark:bg-background">
               <Input
                 value={skillDraft.title}
                 onChange={(e) => setSkillDraft((prev) => ({ ...prev, title: e.target.value }))}
@@ -266,7 +270,7 @@ const KanbanBoard = () => {
               />
             </div>
 
-            <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 dark:border-border dark:bg-background">
               <Select
                 value={skillDraft.categoryKey}
                 onValueChange={(value) => setSkillDraft((prev) => ({ ...prev, categoryKey: value }))}
@@ -295,7 +299,7 @@ const KanbanBoard = () => {
                 </SelectContent>
               </Select>
 
-              <Button type="button" className="rounded-full" onClick={handleAddSkill}>
+              <Button type="button" className="rounded-lg" onClick={handleAddSkill}>
                 <Plus className="mr-2 h-4 w-4" /> Add skill
               </Button>
             </div>
@@ -308,7 +312,7 @@ const KanbanBoard = () => {
               key={preset.key}
               type="button"
               onClick={() => handleAddCategory(preset.name)}
-              className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 transition-colors"
+              className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 transition-colors dark:border-border dark:bg-background dark:text-muted-foreground"
             >
               + {preset.name}
             </button>
@@ -319,16 +323,16 @@ const KanbanBoard = () => {
       {loading ? (
         <div className="mt-6 grid gap-4 lg:grid-cols-4">
           {[...Array(4)].map((_, index) => (
-            <div key={index} className="h-[520px] rounded-3xl border border-gray-200 bg-gray-100/70 animate-pulse" />
+            <div key={index} className="h-[520px] rounded-xl border border-gray-200 bg-gray-100/70 animate-pulse dark:border-border dark:bg-card" />
           ))}
         </div>
       ) : normalizedCategories.length === 0 ? (
-        <div className="mt-6 rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-violet-50 text-violet-600">
+        <div className="mt-6 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm dark:border-border dark:bg-card">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-violet-50 text-violet-600 dark:bg-violet-950/40">
             <Loader2 className="h-6 w-6 animate-spin" />
           </div>
-          <h3 className="mt-4 text-lg font-semibold text-gray-900">No categories yet</h3>
-          <p className="mt-2 text-sm text-gray-500">Create a category like Web Development, DSA, Daily Activity, or Gym to start the board.</p>
+          <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-foreground">No categories yet</h3>
+          <p className="mt-2 text-sm text-gray-500 dark:text-muted-foreground">Create a category like Web Development, DSA, Daily Activity, or Gym to start the board.</p>
         </div>
       ) : (
         <DndContext
@@ -363,7 +367,8 @@ const KanbanBoard = () => {
           <Loader2 className="h-4 w-4 animate-spin" /> Saving board changes...
         </div>
       ) : null}
-    </LearningShell>
+      </div>
+    </AppShell>
   )
 }
 

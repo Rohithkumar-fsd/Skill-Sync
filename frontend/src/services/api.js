@@ -348,3 +348,20 @@ export const saveSkillSubskills = async (skillId, subskills, userId) => {
   })
   return true
 }
+
+export const getActiveRoadmap = async (userId) => {
+  const uid = ensureUserId(userId)
+  const snapshot = await getDocs(getUserCollection(uid, 'active_roadmap'))
+  const roadmapDoc = snapshot.docs.find(d => d.id === 'current')
+  return roadmapDoc ? { id: roadmapDoc.id, ...roadmapDoc.data() } : null
+}
+
+export const updateActiveRoadmap = async (data, userId) => {
+  const uid = ensureUserId(userId)
+  const ref = doc(db, 'users', uid, 'active_roadmap', 'current')
+  await updateDoc(ref, {
+    ...data,
+    updatedAt: nowIso(),
+  })
+  return true
+}

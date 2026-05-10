@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Layers3, ListTodo, Lightbulb,
-  BarChart3, Settings, Zap, LogOut, Moon, Sun,
-  ChevronLeft, Menu, X, User, Bell,
+  BarChart3, Settings, Zap, LogOut,
+  ChevronLeft, Menu, User, Award, SunMoon,
 } from 'lucide-react'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../firebase'
@@ -14,6 +14,7 @@ import { getAuth } from 'firebase/auth'
 const NAV_MAIN = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/skills',    label: 'Skills',    icon: Layers3 },
+  { to: '/portfolio', label: 'Portfolio', icon: Award },
   { to: '/tasks',     label: 'Tasks',     icon: ListTodo },
   { to: '/goals',     label: 'Goals',     icon: Lightbulb },
   { to: '/analytics', label: 'Analytics', icon: BarChart3 },
@@ -28,9 +29,9 @@ const NAV_BOTTOM = [
 const MOBILE_TABS = [
   { to: '/dashboard', label: 'Home',      icon: LayoutDashboard },
   { to: '/skills',    label: 'Skills',    icon: Layers3 },
+  { to: '/portfolio', label: 'Portfolio', icon: Award },
   { to: '/tasks',     label: 'Tasks',     icon: ListTodo },
   { to: '/goals',     label: 'Goals',     icon: Lightbulb },
-  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
 ]
 
 // ─── Sidebar NavItem ─────────────────────────────────────────────────────────
@@ -44,7 +45,7 @@ const SideNavItem = ({ item, collapsed }) => {
         `nav-item ${isActive ? 'active' : ''} ${collapsed ? 'justify-center px-0' : ''}`
       }
     >
-      <Icon className="w-4.5 h-4.5 shrink-0" style={{ width: 18, height: 18 }} />
+      <Icon className="shrink-0" style={{ width: 18, height: 18 }} />
       {!collapsed && <span>{item.label}</span>}
     </NavLink>
   )
@@ -54,8 +55,8 @@ const SideNavItem = ({ item, collapsed }) => {
 export const AppShell = ({ children }) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { theme, toggleTheme } = useTheme()
   const firebaseAuth = getAuth()
+  const { theme, toggleTheme } = useTheme()
 
   const [collapsed, setCollapsed]       = useState(false)
   const [mobileOpen, setMobileOpen]     = useState(false)
@@ -84,6 +85,7 @@ export const AppShell = ({ children }) => {
     const map = {
       '/dashboard': 'Dashboard',
       '/skills':    'Skills',
+      '/portfolio': 'Portfolio',
       '/tasks':     'Tasks',
       '/goals':     'Goals',
       '/analytics': 'Analytics',
@@ -95,12 +97,12 @@ export const AppShell = ({ children }) => {
   })()
 
   return (
-    <div className="app-shell bg-gray-50 dark:bg-zinc-950">
+    <div className="app-shell bg-background">
 
       {/* ── Mobile Overlay ──────────────────────────────────────────────── */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -109,13 +111,12 @@ export const AppShell = ({ children }) => {
       <aside
         className={`app-sidebar
           ${collapsed ? 'collapsed' : ''}
-          ${mobileOpen ? '' : 'mobile-hidden md:translate-x-0'}
+          ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
           transition-all duration-300 ease-in-out
         `}
-        style={{ transform: undefined }}
       >
         {/* Sidebar header */}
-        <div className={`flex items-center gap-3 px-4 border-b border-gray-200 dark:border-zinc-800 shrink-0
+        <div className={`flex items-center gap-3 px-4 border-b border-border/5 shrink-0
           ${collapsed ? 'justify-center py-4' : 'justify-between py-4'}`}
           style={{ height: 'var(--topbar-h)' }}
         >
@@ -124,16 +125,15 @@ export const AppShell = ({ children }) => {
               onClick={() => navigate('/dashboard')}
               className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                <Zap className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center shadow-lg border border-black">
+                <Zap className="w-5 h-5 fill-white stroke-white" />
               </div>
-              <span className="font-bold text-gray-900 dark:text-white text-sm tracking-tight">LevelUP</span>
             </button>
           )}
           {collapsed && (
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center cursor-pointer"
+            <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center cursor-pointer border border-black shadow-lg"
               onClick={() => navigate('/dashboard')}>
-              <Zap className="w-4 h-4 text-white" />
+              <Zap className="w-5 h-5 fill-white stroke-white" />
             </div>
           )}
           {!collapsed && (
@@ -154,15 +154,15 @@ export const AppShell = ({ children }) => {
             to="/skill-gap"
             title={collapsed ? 'Skill Gap Analyzer' : undefined}
             className={({ isActive }) =>
-              `nav-item mb-3 ${isActive ? 'active' : 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400'}
+              `nav-item mb-3 ${isActive ? 'active' : ''}
                ${collapsed ? 'justify-center px-0' : ''}`
             }
           >
             <Zap className="shrink-0" style={{ width: 16, height: 16 }} />
-            {!collapsed && <span className="font-semibold text-xs">AI Skill Gap</span>}
+            {!collapsed && <span className="font-medium text-xs">AI Skill Gap</span>}
           </NavLink>
 
-          <div className="h-px bg-gray-200 dark:bg-zinc-800 mb-3" />
+          <div className="h-px bg-border mb-3" />
 
           {NAV_MAIN.map((item) => (
             <SideNavItem key={item.to} item={item} collapsed={collapsed} />
@@ -170,7 +170,7 @@ export const AppShell = ({ children }) => {
         </nav>
 
         {/* Sidebar footer */}
-        <div className="px-3 pb-4 pt-2 border-t border-gray-200 dark:border-zinc-800 space-y-1">
+        <div className="px-3 pb-4 pt-2 border-t border-border space-y-1">
           {NAV_BOTTOM.map((item) => (
             <SideNavItem key={item.to} item={item} collapsed={collapsed} />
           ))}
@@ -178,8 +178,8 @@ export const AppShell = ({ children }) => {
           <button
             onClick={handleLogout}
             title={collapsed ? 'Sign out' : undefined}
-            className={`nav-item w-full text-left text-red-600 dark:text-red-400
-              hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-700 dark:hover:text-red-300
+            className={`nav-item w-full text-left text-destructive
+              hover:bg-destructive/10 hover:text-destructive
               ${collapsed ? 'justify-center px-0' : ''}`}
           >
             <LogOut style={{ width: 18, height: 18 }} className="shrink-0" />
@@ -198,6 +198,7 @@ export const AppShell = ({ children }) => {
           <button
             onClick={() => setMobileOpen(true)}
             className="btn-icon md:hidden"
+            aria-label="Open navigation"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -205,17 +206,18 @@ export const AppShell = ({ children }) => {
           {/* Expand sidebar (desktop, when collapsed) */}
           {collapsed && (
             <button
-              onClick={() => setCollapsed(false)}
-              className="btn-icon hidden md:flex"
-              title="Expand sidebar"
-            >
+            onClick={() => setCollapsed(false)}
+            className="btn-icon hidden md:flex"
+            title="Expand sidebar"
+            aria-label="Expand sidebar"
+          >
               <Menu className="w-5 h-5" />
             </button>
           )}
 
           {/* Page title breadcrumb */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+            <h1 className="text-sm font-medium text-foreground truncate tracking-[-0.01em]">
               {pageTitle}
             </h1>
           </div>
@@ -225,34 +227,31 @@ export const AppShell = ({ children }) => {
             {/* Skill Gap quick button */}
             <button
               onClick={() => navigate('/skill-gap')}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-                text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/50
-                text-indigo-700 dark:text-indigo-400
-                hover:bg-indigo-100 dark:hover:bg-indigo-950 transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[16px]
+                text-xs font-medium bg-card text-foreground border border-border hover:bg-accent transition-colors"
             >
               <Zap className="w-3 h-3" />
               Skill Gap
             </button>
 
-            {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="btn-icon"
-              title="Toggle theme"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[16px] text-xs font-medium text-muted-foreground bg-accent/50 border border-border hover:bg-accent transition-colors"
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             >
-              {theme === 'dark'
-                ? <Sun className="w-4 h-4 text-amber-400" />
-                : <Moon className="w-4 h-4" />
-              }
+              <SunMoon className="w-3 h-3" />
+              {theme === 'light' ? 'Light mode' : 'Blue mode'}
             </button>
 
             {/* Avatar */}
             <button
               onClick={() => navigate('/profile')}
-              className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600
-                flex items-center justify-center text-white font-bold text-xs
-                hover:opacity-90 transition-opacity shrink-0"
+              className="w-8 h-8 rounded-full bg-card text-foreground border border-border
+                flex items-center justify-center font-semibold text-xs
+                hover:bg-accent transition-colors shrink-0"
               title={userName}
+              aria-label="Open profile"
             >
               {userInit}
             </button>

@@ -103,7 +103,7 @@ const AdaptiveRecommendations = ({ progress, roadmap }) => {
     return (
         <Card className="glass-card shadow-lg border-0 mb-8">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-foreground">
                     <Lightbulb className="w-5 h-5 text-yellow-500" />
                     Personalized Recommendations
                 </CardTitle>
@@ -126,7 +126,7 @@ const AdaptiveRecommendations = ({ progress, roadmap }) => {
                                     <Icon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1">
-                                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                                    <h4 className="font-semibold text-gray-900 dark:text-foreground mb-1">
                                         {rec.title}
                                     </h4>
                                     <p className="text-sm text-gray-700 dark:text-gray-300">

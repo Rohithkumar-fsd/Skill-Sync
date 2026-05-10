@@ -122,9 +122,9 @@ export const AIActionPanel = ({ title = 'AI Assistant', actions = [], result }) 
   }
 
   return (
-    <Card className="border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+    <Card className="border-gray-200 dark:border-border bg-white dark:bg-card shadow-sm">
       <CardHeader className="p-4 pb-3">
-        <CardTitle className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+        <CardTitle className="text-base font-semibold text-gray-900 dark:text-foreground flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-violet-500" />
           {title}
         </CardTitle>
@@ -135,7 +135,7 @@ export const AIActionPanel = ({ title = 'AI Assistant', actions = [], result }) 
             <Button
               key={action.key}
               variant="outline"
-              className="rounded-full border-gray-200 dark:border-zinc-700 bg-transparent"
+              className="rounded-full border-gray-200 dark:border-border bg-transparent"
               onClick={() => runAction(action)}
               disabled={loadingKey === action.key}
             >
@@ -145,9 +145,9 @@ export const AIActionPanel = ({ title = 'AI Assistant', actions = [], result }) 
           ))}
         </div>
         {formatted ? (
-          <div className="rounded-2xl bg-gray-50 dark:bg-zinc-800 p-4 text-sm text-gray-700 dark:text-gray-200 space-y-4">
+          <div className="rounded-2xl bg-gray-50 dark:bg-accent p-4 text-sm text-gray-700 dark:text-gray-200 space-y-4">
             <div className="flex items-center justify-between gap-3">
-              <div className="font-semibold text-gray-900 dark:text-white">{formatted.title}</div>
+              <div className="font-semibold text-gray-900 dark:text-foreground">{formatted.title}</div>
               {formatted.variant ? <span className="text-xs font-semibold text-red-500">Needs attention</span> : null}
             </div>
 
@@ -156,7 +156,7 @@ export const AIActionPanel = ({ title = 'AI Assistant', actions = [], result }) 
             {formatted.danger ? <ResultList label="Missing / improve" items={formatted.danger} variant="danger" /> : null}
 
             {formatted.json ? (
-              <pre className="overflow-auto whitespace-pre-wrap rounded-xl bg-white/70 dark:bg-black/20 p-3 text-xs leading-5 text-gray-700 dark:text-gray-200">
+              <pre className="overflow-auto whitespace-pre-wrap rounded-xl bg-white/70 dark:bg-background/20 p-3 text-xs leading-5 text-gray-700 dark:text-gray-200">
                 {JSON.stringify(formatted.json, null, 2)}
               </pre>
             ) : null}

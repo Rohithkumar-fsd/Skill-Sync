@@ -11,6 +11,7 @@ const ProfileSetup = lazy(() => import('./components/ProfileSetup'))
 const SkillGapAnalyzer = lazy(() => import('./pages/SkillGapAnalyzer'))
 const Skills = lazy(() => import('./pages/Skills'))
 const SkillDetail = lazy(() => import('./pages/SkillDetail'))
+const Portfolio = lazy(() => import('./pages/Portfolio'))
 const Tasks = lazy(() => import('./pages/Tasks'))
 const Goals = lazy(() => import('./pages/Goals'))
 const Analytics = lazy(() => import('./pages/Analytics'))
@@ -31,10 +32,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white"></div>
-          <p className="text-gray-500 dark:text-gray-400 font-medium">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="text-muted-foreground font-medium">Loading...</p>
         </div>
       </div>
     )
@@ -42,9 +43,9 @@ function App() {
 
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </div>
     }>
@@ -76,6 +77,10 @@ function App() {
         <Route
           path="/skills/:id"
           element={user ? <SkillDetail /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/portfolio"
+          element={user ? <Portfolio /> : <Navigate to="/login" />}
         />
         <Route
           path="/tasks"

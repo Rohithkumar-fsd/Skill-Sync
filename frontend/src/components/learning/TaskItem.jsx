@@ -10,11 +10,11 @@ const STATUS_STYLES = {
 
 export const TaskItem = ({ task, skillName, onToggle, onEdit, onDelete }) => {
   return (
-    <Card className="border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+    <Card className="border-gray-200 dark:border-border bg-white dark:bg-card shadow-sm">
       <CardContent className="p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-semibold text-gray-900 dark:text-white">{task.title}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-foreground">{task.title}</h3>
             <PriorityBadge value={task.priority} />
             <span className={`text-xs font-semibold ${STATUS_STYLES[task.status] || STATUS_STYLES.NOT_STARTED}`}>{task.status}</span>
           </div>
@@ -26,12 +26,12 @@ export const TaskItem = ({ task, skillName, onToggle, onEdit, onDelete }) => {
         {(onToggle || onEdit || onDelete) ? (
           <div className="flex flex-wrap items-center gap-2">
             {onToggle ? (
-              <button onClick={() => onToggle?.(task)} className="rounded-full border border-gray-200 dark:border-zinc-700 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800">
+              <button onClick={() => onToggle?.(task)} className="rounded-full border border-gray-200 dark:border-border px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800">
                 Toggle status
               </button>
             ) : null}
             {onEdit ? (
-              <button onClick={() => onEdit?.(task)} className="rounded-full border border-gray-200 dark:border-zinc-700 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800">
+              <button onClick={() => onEdit?.(task)} className="rounded-full border border-gray-200 dark:border-border px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800">
                 Edit
               </button>
             ) : null}

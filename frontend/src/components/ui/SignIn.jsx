@@ -3,7 +3,6 @@ import { Eye, EyeOff, Zap, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth'
 import { auth } from '../../firebase'
 import { useNavigate } from 'react-router-dom'
-import { useTheme } from '../../contexts/ThemeContext'
 import axios from 'axios'
 
 // ─── Google Icon ──────────────────────────────────────────────────────────────
@@ -34,7 +33,6 @@ export const SignIn = () => {
   const [resetSent, setResetSent]       = useState(false)
   const [resetMode, setResetMode]       = useState(false)
   const navigate                        = useNavigate()
-  const { theme, toggleTheme }          = useTheme()
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -83,7 +81,7 @@ export const SignIn = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-zinc-950">
+    <div className="min-h-screen flex bg-white dark:bg-background">
 
       {/* ── Left Hero Panel ─────────────────────────────────────────────── */}
       <div className="auth-hero w-[45%] relative overflow-hidden">
@@ -96,10 +94,9 @@ export const SignIn = () => {
         <div className="relative z-10 flex flex-col h-full">
           {/* Brand */}
           <div className="flex items-center gap-3 mb-auto">
-            <div className="w-10 h-10 rounded-2xl bg-white/15 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center shadow-2xl border border-white/10">
+              <Zap className="w-6 h-6 fill-white stroke-white" />
             </div>
-            <span className="font-bold text-white text-lg tracking-tight">LevelUP</span>
           </div>
 
           {/* Hero copy */}
@@ -128,22 +125,11 @@ export const SignIn = () => {
 
       {/* ── Right Form Panel ─────────────────────────────────────────────── */}
       <div className="auth-form-panel flex-1">
-        {/* Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          className="absolute top-5 right-5 btn-icon"
-          title="Toggle theme"
-        >
-          {theme === 'dark'
-            ? <span className="text-amber-400 text-lg">☀️</span>
-            : <span className="text-lg">🌙</span>
-          }
-        </button>
         <div className="w-full max-w-sm mx-auto">
           {!resetMode ? (
             <>
               <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Welcome back</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-1">Welcome back</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Sign in to continue your learning journey</p>
               </div>
 
@@ -167,9 +153,9 @@ export const SignIn = () => {
 
               {/* Divider */}
               <div className="relative flex items-center gap-3 mb-4">
-                <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-800" />
-                <span className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">or</span>
-                <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-800" />
+                <div className="flex-1 h-px bg-gray-200 dark:bg-accent" />
+                <span className="text-xs font-semibold text-gray-400 dark:text-muted-foreground uppercase tracking-wider">or</span>
+                <div className="flex-1 h-px bg-gray-200 dark:bg-accent" />
               </div>
 
               {/* Form */}
@@ -251,7 +237,7 @@ export const SignIn = () => {
               >
                 ← Back to sign in
               </button>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Reset password</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-1">Reset password</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
                 We'll send a password reset link to your email.
               </p>

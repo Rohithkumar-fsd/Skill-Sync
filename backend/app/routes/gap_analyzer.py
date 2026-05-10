@@ -20,12 +20,13 @@ from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional, Tuple
 
-from app.utils.auth import verify_firebase_token
+from app.utils.auth import get_optional_firebase_token
 from app.services.analyzer.parser import extract_text_from_file
 from app.services.analyzer.extractor import SkillExtractor
 from app.services.analyzer.matcher import calculate_semantic_match, build_learning_velocity
 from app.services.analyzer.storage import save_gap_analysis
 from app.services.storage_service import save_active_roadmap
+from app.config import ENV
 
 router = APIRouter(prefix="/api/v1", tags=["Skill Gap Analyzer"])
 
@@ -71,6 +72,7 @@ class GapAnalysisResponse(BaseModel):
 class AdoptRoadmapRequest(BaseModel):
     gap_analysis: Dict[str, Any]    # full GapAnalysisResponse payload
     roadmap_title: str = "Skill Gap Roadmap"
+    user_id: Optional[str] = None
 
 
 # ─── Endpoint ─────────────────────────────────────────────────────────────────
@@ -93,7 +95,7 @@ async def analyze_skill_gap(
     hours_per_week: int        = Form(default=10, ge=1, le=80,
                                        description="Study hours available per week"),
     # ── Auth: extracts user_id from Bearer token (no Firebase Storage needed)
-    user_id: str = Depends(verify_firebase_token),
+    user_id: Optional[str] = Depends(get_optional_firebase_token),
 ):
     # ── 1. Validate inputs ────────────────────────────────────────────────────
     if not jd_text.strip():
@@ -148,7 +150,8 @@ async def analyze_skill_gap(
     }
 
     # ── 7. Persist to Firestore asynchronously (non-blocking BackgroundTask) ──
-    background_tasks.add_task(save_gap_analysis, user_id, response_payload)
+    if user_id:
+        background_tasks.add_task(save_gap_analysis, user_id, response_payload)
 
     return response_payload
 
@@ -175,61 +178,126 @@ def _extract_skills_sync(
 )
 async def adopt_gap_roadmap(
     body:    AdoptRoadmapRequest,
-    user_id: str = Depends(verify_firebase_token),
+    auth_user_id: Optional[str] = Depends(get_optional_firebase_token),
 ):
     """
     Converts a gap-analysis result into the user's active roadmap structure
     that powers the Dashboard progress tracker.
+    
+    This endpoint:
+    1. Validates the gap analysis data
+    2. Converts it to the Dashboard roadmap format
+    3. Saves to Firestore (user's active_roadmap collection)
+    4. Returns confirmation with skill count
     """
-    ga   = body.gap_analysis
-    lv   = ga.get("learning_velocity", {})
-    phases = lv.get("roadmap", [])
+    print(f"DEBUG: Received adopt-roadmap request for user: {body.user_id}")
+    try:
+        user_id = auth_user_id
+        if not user_id and ENV.lower() != "production":
+            user_id = body.user_id
 
-    # Build career_decision stub (Dashboard expects this shape)
-    career_decision = {
-        "career":              body.roadmap_title,
-        "reasoning":           f"Adopted from Skill Gap Analyzer – {ga.get('match_percentage', 0):.0f}% match",
-        "confidence":          int(ga.get("job_readiness_score", 0)),
-        "skill_match_percentage": int(ga.get("match_percentage", 0)),
-        "market_readiness":    int(ga.get("job_readiness_score", 0)),
-        "industry_demand":     "stable",
-        "key_strengths":       ga.get("matched_skills", [])[:5],
-        "skill_gaps":          ga.get("missing_skills", [])[:5],
-        "time_to_job_ready":   f"~{lv.get('weeks_to_readiness', 0):.0f} weeks",
-        "alternatives":        [],
-        "source":              "skill_gap_analyzer",
-    }
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Please sign in to adopt roadmap")
 
-    # Convert gap phases into the roadmap phase shape Dashboard uses
-    converted_phases = []
-    for p in phases:
-        skill_details = p.get("skill_details", [])
-        milestones = []
-        for sd in skill_details:
-            milestones.append({
-                "name":            sd.get("name", ""),
-                "description":     f"Learn {sd.get('name','')} ({sd.get('category','')}) – ~{sd.get('hours',0)}h",
-                "estimated_hours": sd.get("hours", 0),
-                "resources":       sd.get("resources", []),
+        # Extract and validate gap analysis
+        ga = body.gap_analysis
+        if not ga:
+            raise HTTPException(status_code=400, detail="gap_analysis cannot be empty")
+        
+        lv = ga.get("learning_velocity", {})
+        if not lv:
+            raise HTTPException(status_code=400, detail="learning_velocity is required")
+            
+        phases = lv.get("roadmap", [])
+        missing_count = len(ga.get("missing_skills", []))
+        matched_count = len(ga.get("matched_skills", []))
+
+        # Build career_decision stub (Dashboard expects this shape)
+        career_decision = {
+            "career":              body.roadmap_title,
+            "reasoning":           f"Adopted from Skill Gap Analyzer – {ga.get('match_percentage', 0):.0f}% match",
+            "confidence":          int(ga.get("job_readiness_score", 0)),
+            "skill_match_percentage": int(ga.get("match_percentage", 0)),
+            "market_readiness":    int(ga.get("job_readiness_score", 0)),
+            "industry_demand":     "stable",
+            "key_strengths":       ga.get("matched_skills", [])[:5],
+            "skill_gaps":          ga.get("missing_skills", [])[:5],
+            "time_to_job_ready":   f"~{lv.get('weeks_to_readiness', 0):.0f} weeks",
+            "alternatives":        [],
+            "source":              "skill_gap_analyzer",
+            "created_at":          __import__('datetime').datetime.utcnow().isoformat(),
+        }
+
+        # Convert gap phases into the roadmap phase shape Dashboard uses
+        converted_phases = []
+        total_hours = 0
+        
+        for phase_idx, p in enumerate(phases):
+            skill_details = p.get("skill_details", [])
+            milestones = []
+            phase_hours = 0
+            
+            for sd in skill_details:
+                hours = sd.get("hours", 0)
+                phase_hours += hours
+                total_hours += hours
+                
+                milestones.append({
+                    "name":            sd.get("name", ""),
+                    "description":     f"Learn {sd.get('name','')} ({sd.get('category','')}) – ~{hours}h",
+                    "estimated_hours": hours,
+                    "resources":       sd.get("resources", []),
+                    "status":          "pending",
+                })
+
+            converted_phases.append({
+                "phase":        p["phase"],
+                "duration":     p.get("timeline", ""),
+                "difficulty":   "intermediate",
+                "focus_skills": p.get("skills", []),
+                "outcomes":     [f"Be proficient in {s}" for s in p.get("skills", [])[:4]],
+                "milestones":   milestones,
+                "prerequisites": [],
+                "status":       "pending",
+                "completed_at": None,
+                "estimated_hours": phase_hours,
             })
 
-        converted_phases.append({
-            "phase":        p["phase"],
-            "duration":     p.get("timeline", ""),
-            "difficulty":   "intermediate",
-            "focus_skills": p.get("skills", []),
-            "outcomes":     [f"Be proficient in {s}" for s in p.get("skills", [])[:4]],
-            "milestones":   milestones,
-            "prerequisites": [],
-            "status":       "pending",
-            "completed_at": None,
-        })
+        roadmap_obj = {
+            "duration_months":     max(round(lv.get("weeks_to_readiness", 4) / 4), 1),
+            "roadmap":             converted_phases,
+            "total_estimated_hours": total_hours,
+            "weeks_to_readiness":  lv.get("weeks_to_readiness", 0),
+        }
 
-    roadmap_obj = {
-        "duration_months": max(round(lv.get("weeks_to_readiness", 4) / 4), 1),
-        "roadmap":         converted_phases,
-    }
+        # Save to Firestore asynchronously
+        await run_in_threadpool(
+            save_active_roadmap, 
+            user_id, 
+            career_decision, 
+            roadmap_obj,
+            preserve_progress=False
+        )
 
-    await run_in_threadpool(save_active_roadmap, user_id, career_decision, roadmap_obj)
+        return {
+            "status": "ok",
+            "message": f"Roadmap adopted successfully",
+            "details": {
+                "title": body.roadmap_title,
+                "matched_skills": matched_count,
+                "missing_skills": missing_count,
+                "phases": len(converted_phases),
+                "total_hours": total_hours,
+                "weeks_to_readiness": lv.get("weeks_to_readiness", 0),
+                "user_id": user_id,
+            }
+        }
 
-    return {"status": "ok", "message": "Roadmap adopted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in adopt_gap_roadmap: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to adopt roadmap: {str(e)}"
+        )

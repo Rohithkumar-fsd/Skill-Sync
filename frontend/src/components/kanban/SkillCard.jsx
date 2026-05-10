@@ -30,7 +30,7 @@ export const SkillCard = ({ skill, categoryName }) => {
     <article
       ref={setNodeRef}
       style={style}
-      className={`group rounded-2xl bg-white border border-gray-200/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 ${isDragging ? 'opacity-40 ring-2 ring-violet-500 shadow-lg' : ''}`}
+      className={`group rounded-xl bg-white border border-gray-200/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 ${isDragging ? 'opacity-40 ring-2 ring-violet-500 shadow-lg' : ''}`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0">

@@ -9,9 +9,9 @@ const Toast = ({ message, type = 'success', onClose }) => {
     };
 
     const bgColors = {
-        success: 'bg-white dark:bg-zinc-900 border-green-500 shadow-green-500/20',
-        error: 'bg-white dark:bg-zinc-900 border-red-500 shadow-red-500/20',
-        info: 'bg-white dark:bg-zinc-900 border-blue-500 shadow-blue-500/20'
+        success: 'bg-white dark:bg-card border-green-500 shadow-green-500/20',
+        error: 'bg-white dark:bg-card border-red-500 shadow-red-500/20',
+        info: 'bg-white dark:bg-card border-blue-500 shadow-blue-500/20'
     };
 
     return (
@@ -29,13 +29,13 @@ const Toast = ({ message, type = 'success', onClose }) => {
                     </div>
                     <div className="flex-1 min-w-0">
                         {typeof message === 'string' ? (
-                            <p className="text-sm font-medium text-gray-900 dark:text-white leading-relaxed">
+                            <p className="text-sm font-medium text-gray-900 dark:text-foreground leading-relaxed">
                                 {message}
                             </p>
                         ) : (
                             <div className="flex flex-col gap-1">
                                 {message.title && (
-                                    <p className="text-sm font-bold text-gray-900 dark:text-white">
+                                    <p className="text-sm font-bold text-gray-900 dark:text-foreground">
                                         {message.title}
                                     </p>
                                 )}

@@ -4,15 +4,16 @@ import {
   ListTodo, Plus, CheckCircle2, Circle, Pencil, Trash2,
   Calendar, ChevronDown, X, Tag, AlertCircle, Clock
 } from 'lucide-react'
-import { LearningShell } from '../components/learning/LearningShell'
+import { AppShell } from '../components/layout/AppShell'
+import { PageHeader } from '../components/ui/PageHeader'
 import { useSkills } from '../contexts/SkillContext'
 import { useTasks } from '../contexts/TaskContext'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const PRIORITY_CONFIG = {
-  HIGH:   { label: 'High',   cls: 'priority-high',   dot: 'bg-red-500',   ring: 'ring-red-200 dark:ring-red-900' },
-  MEDIUM: { label: 'Medium', cls: 'priority-medium', dot: 'bg-amber-500', ring: 'ring-amber-200 dark:ring-amber-900' },
-  LOW:    { label: 'Low',    cls: 'priority-low',    dot: 'bg-gray-400',  ring: 'ring-gray-200 dark:ring-zinc-800' },
+  HIGH:   { label: 'High',   cls: 'priority-high',   dot: 'bg-red-500',   ring: 'ring-red-200' },
+  MEDIUM: { label: 'Medium', cls: 'priority-medium', dot: 'bg-amber-500', ring: 'ring-amber-200' },
+  LOW:    { label: 'Low',    cls: 'priority-low',    dot: 'bg-gray-400',  ring: 'ring-gray-200' },
 }
 
 const STATUS_CONFIG = {
@@ -26,11 +27,11 @@ const formatDate = (iso) => {
   const d = new Date(iso); d.setHours(0,0,0,0)
   const today = new Date(); today.setHours(0,0,0,0)
   const diff = Math.floor((d - today) / 86400000)
-  if (diff < -1)  return { text: `${Math.abs(diff)}d overdue`, cls: 'text-red-600 dark:text-red-400', overdue: true }
-  if (diff === -1) return { text: 'Yesterday',   cls: 'text-red-500 dark:text-red-400',    overdue: true }
-  if (diff === 0)  return { text: 'Today',       cls: 'text-indigo-600 dark:text-indigo-400', overdue: false }
-  if (diff === 1)  return { text: 'Tomorrow',    cls: 'text-emerald-600 dark:text-emerald-400', overdue: false }
-  return { text: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), cls: 'text-gray-400 dark:text-zinc-500', overdue: false }
+  if (diff < -1)  return { text: `${Math.abs(diff)}d overdue`, cls: 'text-red-600', overdue: true }
+  if (diff === -1) return { text: 'Yesterday',   cls: 'text-red-500',    overdue: true }
+  if (diff === 0)  return { text: 'Today',       cls: 'text-black font-semibold', overdue: false }
+  if (diff === 1)  return { text: 'Tomorrow',    cls: 'text-emerald-600', overdue: false }
+  return { text: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), cls: 'text-gray-400', overdue: false }
 }
 
 const emptyForm = { title: '', skillId: '', deadline: '', priority: 'MEDIUM', status: 'NOT_STARTED', notes: '' }
@@ -53,19 +54,22 @@ const TaskRow = ({ task, skillName, onToggle, onEdit, onDelete }) => {
       {/* Checkbox */}
       <button
         onClick={() => onToggle(task)}
-        className={`check-box mt-0.5 shrink-0 hover:ring-2 transition-all ${isDone ? 'checked ring-indigo-300 dark:ring-indigo-800' : `ring-transparent ${pCfg.ring}`}`}
+        className={`check-box mt-0.5 shrink-0 hover:ring-2 transition-all ${isDone ? 'checked ring-black' : `ring-transparent ${pCfg.ring}`}`}
+        role="checkbox"
+        aria-checked={isDone}
+        aria-label={isDone ? 'Mark task incomplete' : 'Mark task complete'}
       >
         {isDone && <CheckCircle2 className="w-3 h-3 text-white" />}
       </button>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-medium truncate ${isDone ? 'line-through text-gray-400 dark:text-zinc-600' : 'text-gray-900 dark:text-white'}`}>
+        <p className={`text-sm font-medium truncate ${isDone ? 'line-through text-gray-400' : 'text-gray-900'}`}>
           {task.title}
         </p>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
           {skillName && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-gray-500 dark:text-zinc-400">
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-gray-500">
               <Tag className="w-2.5 h-2.5" />{skillName}
             </span>
           )}
@@ -83,13 +87,13 @@ const TaskRow = ({ task, skillName, onToggle, onEdit, onDelete }) => {
           <span className={`w-1.5 h-1.5 rounded-full ${pCfg.dot}`} />
           {pCfg.label}
         </span>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
           <button onClick={() => onEdit(task)}
             className="btn-icon w-7 h-7 rounded-lg" title="Edit">
             <Pencil className="w-3 h-3" />
           </button>
           <button onClick={() => onDelete(task.id)}
-            className="btn-icon w-7 h-7 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Delete">
+            className="btn-icon w-7 h-7 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50" title="Delete">
             <Trash2 className="w-3 h-3" />
           </button>
         </div>
@@ -102,9 +106,9 @@ const TaskRow = ({ task, skillName, onToggle, onEdit, onDelete }) => {
 const GroupHeader = ({ title, count, warning }) => (
   <div className="flex items-center gap-2 mb-2 mt-6 first:mt-0">
     {warning && <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />}
-    <span className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-400">{title}</span>
-    <span className="text-xs text-gray-400 dark:text-zinc-500 font-medium">({count})</span>
-    <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-800" />
+    <span className="text-xs font-bold uppercase tracking-widest text-gray-500">{title}</span>
+    <span className="text-xs text-gray-400 font-medium">({count})</span>
+    <div className="flex-1 h-px bg-gray-200" />
   </div>
 )
 
@@ -115,13 +119,13 @@ const TaskSlideOver = ({ form, editingId, skills, onChange, onSubmit, onClose })
   return (
     <>
       <div className="slideover-backdrop" onClick={onClose} />
-      <div className="slideover-panel">
+      <div className="slideover-panel" role="dialog" aria-modal="true" aria-labelledby="task-slideover-title">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800 shrink-0">
-          <h2 className="text-base font-bold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
+          <h2 id="task-slideover-title" className="text-base font-bold text-gray-900">
             {editingId ? 'Edit Task' : 'New Task'}
           </h2>
-          <button onClick={onClose} className="btn-icon">
+          <button onClick={onClose} className="btn-icon" aria-label="Close panel">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -148,7 +152,7 @@ const TaskSlideOver = ({ form, editingId, skills, onChange, onSubmit, onClose })
               value={form.skillId}
               onChange={e => onChange('skillId', e.target.value)}
             >
-              <option value="">— No skill —</option>
+              <option value="">No skill</option>
               {skills.map(s => (
                 <option key={s.id} value={s.id}>{s.name || s.title}</option>
               ))}
@@ -193,7 +197,7 @@ const TaskSlideOver = ({ form, editingId, skills, onChange, onSubmit, onClose })
             <textarea
               rows={4}
               className="input-base resize-none"
-              placeholder="Any additional notes…"
+              placeholder="Any additional notes..."
               value={form.notes}
               onChange={e => onChange('notes', e.target.value)}
             />
@@ -201,7 +205,7 @@ const TaskSlideOver = ({ form, editingId, skills, onChange, onSubmit, onClose })
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 flex gap-3 shrink-0">
+        <div className="px-6 py-4 border-t border-gray-200 flex gap-3 shrink-0">
           <button onClick={onClose} className="btn-outline flex-1">Cancel</button>
           <button onClick={onSubmit} disabled={!form.title.trim()} className="btn-primary flex-1">
             {editingId ? 'Save Changes' : 'Add Task'}
@@ -327,10 +331,21 @@ const Tasks = () => {
   const totalVisible = Object.values(groups).flat().length
 
   return (
-    <LearningShell
-      title="Tasks"
-      subtitle="Capture your work, link it to skills, and keep today's priorities visible."
-    >
+    <AppShell>
+      <div className="page-container animate-fade-slide-in">
+        <PageHeader 
+          title="Tasks" 
+          subtitle="Capture your work, link it to skills, and keep today's priorities visible." 
+          actions={
+            <button
+              onClick={() => setShowForm(true)}
+              className="btn-primary gap-2 text-sm"
+            >
+              <Plus className="w-4 h-4" />
+              New Task
+            </button>
+          }
+        />
       <AnimatePresence>
         {showForm && (
           <TaskSlideOver
@@ -348,20 +363,20 @@ const Tasks = () => {
         {/* Toolbar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {/* Filter tabs */}
-          <div className="flex items-center gap-1 bg-gray-100 dark:bg-zinc-800 rounded-xl p-1 flex-wrap">
+          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 flex-wrap">
             {FILTERS.map(f => (
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all
                   ${filter === f.key
-                    ? 'bg-white dark:bg-zinc-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
                   }`}
               >
                 {f.label}
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold
-                  ${filter === f.key ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400' : 'bg-gray-200 dark:bg-zinc-700 text-gray-500 dark:text-zinc-400'}`}>
+                  ${filter === f.key ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'}`}>
                   {f.count}
                 </span>
               </button>
@@ -369,14 +384,6 @@ const Tasks = () => {
           </div>
 
           <div className="flex-1" />
-
-          <button
-            onClick={() => setShowForm(true)}
-            className="btn-primary gap-2 text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            New Task
-          </button>
         </div>
 
         {/* Task groups */}
@@ -385,8 +392,8 @@ const Tasks = () => {
             <div className="empty-state-icon">
               <ListTodo className="w-7 h-7 text-indigo-400" />
             </div>
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-2">No tasks found</p>
-            <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1 mb-4">
+            <p className="text-sm font-semibold text-gray-700 mt-2">No tasks found</p>
+            <p className="text-xs text-gray-400 mt-1 mb-4">
               {filter === 'today' ? "No tasks scheduled for today." : "Start by adding your first task."}
             </p>
             <button onClick={() => setShowForm(true)} className="btn-primary text-xs py-2 px-4">
@@ -403,7 +410,8 @@ const Tasks = () => {
           </div>
         )}
       </div>
-    </LearningShell>
+      </div>
+    </AppShell>
   )
 }
 

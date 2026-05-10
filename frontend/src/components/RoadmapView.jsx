@@ -51,12 +51,12 @@ const RoadmapView = ({ roadmap, onGenerate, onRefresh, loading }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl border-2 border-dashed border-gray-200 dark:border-zinc-800 p-8 sm:p-10 text-center"
+          className="w-full max-w-md bg-white dark:bg-card rounded-2xl border-2 border-dashed border-gray-200 dark:border-border p-8 sm:p-10 text-center"
         >
-          <div className="inline-flex p-3 bg-gray-100 dark:bg-zinc-800 rounded-full mb-4">
-            <Sparkles className="h-8 w-8 text-gray-900 dark:text-white" />
+          <div className="inline-flex p-3 bg-gray-100 dark:bg-accent rounded-full mb-4">
+            <Sparkles className="h-8 w-8 text-gray-900 dark:text-foreground" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-foreground mb-2">
             Start Your Journey
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
@@ -91,14 +91,14 @@ const RoadmapView = ({ roadmap, onGenerate, onRefresh, loading }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden"
+          className="bg-white dark:bg-card rounded-2xl border border-gray-200 dark:border-border overflow-hidden"
         >
-          <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-zinc-800">
+          <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-border">
             <div className="flex items-center justify-between">
-              <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-foreground">
                 Learning Path
               </h3>
-              <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-zinc-800 px-2.5 py-1 rounded-full">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-accent px-2.5 py-1 rounded-full">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{roadmap.learning_roadmap.duration_months}mo</span>
               </div>
@@ -136,11 +136,11 @@ const RoadmapView = ({ roadmap, onGenerate, onRefresh, loading }) => {
 
                     <div className={`flex-1 p-3 sm:p-4 rounded-xl border ${isCompleted
                       ? 'bg-emerald-50/50 dark:bg-emerald-500/5 border-emerald-200 dark:border-emerald-900/30'
-                      : 'bg-gray-50 dark:bg-zinc-800/50 border-gray-200 dark:border-zinc-700'
+                      : 'bg-gray-50 dark:bg-accent/50 border-gray-200 dark:border-border'
                       }`}>
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className={`text-sm sm:text-base font-semibold ${isCompleted ? 'text-emerald-800 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
+                          <h4 className={`text-sm sm:text-base font-semibold ${isCompleted ? 'text-emerald-800 dark:text-emerald-400' : 'text-gray-900 dark:text-foreground'}`}>
                             {phase.phase}
                           </h4>
                           {isCompleted && (
@@ -178,7 +178,7 @@ const RoadmapView = ({ roadmap, onGenerate, onRefresh, loading }) => {
                           {phase.focus_skills.slice(0, 6).map((skill, idx) => (
                             <span
                               key={idx}
-                              className="px-2 py-1 rounded text-xs bg-white dark:bg-zinc-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-zinc-700 font-medium"
+                              className="px-2 py-1 rounded text-xs bg-white dark:bg-accent text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-border font-medium"
                             >
                               {skill}
                             </span>
@@ -224,11 +224,11 @@ const RoadmapView = ({ roadmap, onGenerate, onRefresh, loading }) => {
                               >
                                 <div className="mt-2 space-y-2">
                                   {phase.milestones.map((ms, mi) => (
-                                    <div key={mi} className="rounded-lg border border-gray-200 dark:border-zinc-700 overflow-hidden">
+                                    <div key={mi} className="rounded-lg border border-gray-200 dark:border-border overflow-hidden">
                                       {/* Topic header */}
-                                      <div className="flex items-center justify-between px-3 py-2 bg-gray-50 dark:bg-zinc-800">
+                                      <div className="flex items-center justify-between px-3 py-2 bg-gray-50 dark:bg-accent">
                                         <div className="flex items-center gap-2">
-                                          <span className="text-xs font-semibold text-gray-800 dark:text-white capitalize">{ms.name}</span>
+                                          <span className="text-xs font-semibold text-gray-800 dark:text-foreground capitalize">{ms.name}</span>
                                           {ms.estimated_hours > 0 && (
                                             <span className="flex items-center gap-0.5 text-[10px] text-gray-400">
                                               <Clock className="w-2.5 h-2.5" />~{ms.estimated_hours}h
