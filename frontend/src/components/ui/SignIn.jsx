@@ -86,9 +86,9 @@ export const SignIn = () => {
       {/* ── Left Hero Panel ─────────────────────────────────────────────── */}
       <div className="auth-hero w-[45%] relative overflow-hidden">
         {/* Decorative circles */}
-        <div className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-40 -translate-x-1/2 -translate-y-1/2"
-          style={{ background: 'radial-gradient(circle, #c4b5fd, transparent)' }} />
-        <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-30 translate-x-1/3 translate-y-1/3"
+        <div className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-30 -translate-x-1/2 -translate-y-1/2"
+          style={{ background: 'radial-gradient(circle, #a78bfa, transparent)' }} />
+        <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-20 translate-x-1/3 translate-y-1/3"
           style={{ background: 'radial-gradient(circle, #818cf8, transparent)' }} />
 
         <div className="relative z-10 flex flex-col h-full">
