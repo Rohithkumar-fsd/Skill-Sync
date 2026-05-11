@@ -5,7 +5,7 @@ pydantic
 openai
 firebase-admin
 httptools
-uvloop
+python-multipart
 # ── Skill Gap Analyzer dependencies ──────────────────────
 PyMuPDF           # PDF in-memory parsing  (fitz)
 python-docx       # DOCX in-memory parsing
