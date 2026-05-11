@@ -15,22 +15,16 @@ app = FastAPI(
 )
 
 origins = [
-    "http://localhost:3000",
     "http://localhost:5173",
-    "https://levelup.vercel.app",
     "https://level-up-new.vercel.app",
-    os.getenv("FRONTEND_URL"),
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin for origin in origins if origin],
-    allow_origin_regex=r"https?://(localhost|.*\.vercel\.app)",
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=3600,
 )
 
 app.include_router(career_router)
