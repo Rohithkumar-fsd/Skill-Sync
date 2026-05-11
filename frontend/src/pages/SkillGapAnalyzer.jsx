@@ -15,7 +15,7 @@ import {
 import { useRoadmap } from '../contexts/RoadmapContext'
 import { useTasks } from '../contexts/TaskContext'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 // ── Role & Tool presets ───────────────────────────────────────────────────────
 const ROLES = [
@@ -402,12 +402,18 @@ const SkillGapAnalyzer = () => {
         }
       }
 
-      setError(
-        err.response?.data?.detail ||
-        err.response?.data?.message ||
-        err.message ||
-        'Analysis failed. Please try again.'
-      )
+      let message = 'Analysis failed. Please try again.'
+      if (err.message === 'Network Error') {
+        message = 'Could not connect to the analysis server. Please ensure the backend is running on port 8000.'
+      } else if (err.response?.data?.detail) {
+        message = err.response.data.detail
+      } else if (err.response?.data?.message) {
+        message = err.response.data.message
+      } else if (err.message) {
+        message = err.message
+      }
+      
+      setError(message)
     } finally {
       setLoading(false)
     }
