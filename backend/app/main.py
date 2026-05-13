@@ -8,11 +8,17 @@ from app.routes.progress import router as progress_router
 from app.routes.gap_analyzer import router as gap_analyzer_router
 from app.routes.ai import router as ai_router
 
+from app.utils.firebase import init_firebase_app
+
 app = FastAPI(
     title=PROJECT_NAME,
     description="LevelUP – AI-powered career path & learning roadmap agent",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+def startup_event():
+    init_firebase_app()
 
 origins = [
     "http://localhost:5173",
