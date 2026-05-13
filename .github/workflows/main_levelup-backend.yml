@@ -36,8 +36,9 @@ jobs:
         with:
           name: python-app
           path: |
-            backend
+            backend/
             !backend/antenv/
+            !backend/venv/
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,6 +52,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-app
+          path: .
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -65,5 +67,5 @@ jobs:
         with:
           app-name: 'levelup-backend'
           slot-name: 'Production'
-          package: ./backend
+          package: .
           startup-command: 'uvicorn app.main:app --host 0.0.0.0 --port 8000'
