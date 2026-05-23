@@ -1,170 +1,117 @@
-# LevelUP
+# 🎯 Skill-Sync
 
 > AI-powered career path decision and personalized learning roadmap platform
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg?style=for-the-badge&logo=python)](https://www.python.org/)
-[![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react)](https://reactjs.org/)
 
-## Overview
+## 📌 Overview
 
-**LevelUP** is an AI-powered career path decision and personalized learning roadmap platform that helps students choose the right career and learn it in a structured, time-bound way.
+Skill-Sync helps students choose the right career and learn it in a structured, time-bound way.  
+It **decides** the best-fit career path and builds an **adaptive learning roadmap** based on your profile.
 
-Unlike traditional career guidance tools, LevelUP **does not just give advice** - it **decides the best-fit career path** and **builds an adaptive learning roadmap** based on the student's profile.
+Unlike traditional career guidance tools, Skill-Sync doesn't just give advice —  
+it **analyzes**, **decides**, and **generates** a complete learning journey tailored to you.
 
-## Problem Statement
+## 🚀 Features
 
-| Challenge | Impact |
-|-----------|--------|
-| **Too many career options** | Students feel overwhelmed and confused |
-| **Lack of personalized guidance** | Generic advice doesn't match individual needs |
-| **Rapidly changing industry demands** | Traditional guidance becomes outdated |
-| **No clear learning order** | Students don't know where to start |
-| **Generic roadmaps** | Ignore time constraints, skills, and learning pace |
+- 🤖 AI-powered career path decision making
+- 🗺️ Personalized, time-bound learning roadmap
+- 🔐 Firebase authentication & secure sessions
+- 📊 Comprehensive progress tracking
+- ⚡ Fast, modern React + Tailwind UI
+- 🧠 Adaptive to your skills, time & learning pace
 
-## Solution
-
-LevelUP uses an **AI decision-making agent** to provide a complete learning journey:
+## 🧩 How It Works
 
 | Step | Description |
 |------|-------------|
-| **1. Analyze** | Evaluate student's interests, skills, time availability, and learning pace |
-| **2. Decide** | Select the best-fit career path using AI analysis |
-| **3. Generate** | Create a personalized, time-bound learning roadmap |
+| 1. **Analyze** | Evaluates your interests, skills, time & learning pace |
+| 2. **Decide** | AI selects the best-fit career path for you |
+| 3. **Generate** | Creates a personalized, time-bound roadmap |
+| 4. **Track** | Monitor your progress as you learn |
 
-## Key Features
+## 🛠️ Tech Stack
 
-LevelUP delivers AI-powered career path decisions, personalized learning roadmaps with time and pace-aware planning, Firebase authentication, comprehensive progress tracking, and a modern React-Tailwind interface for an optimal student experience.
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React, Tailwind CSS |
+| Backend | FastAPI, Python 3.8+ |
+| AI | OpenAI API (Azure) |
+| Database | Firebase Firestore |
+| Auth | Firebase Authentication |
 
-## Tech Stack
-
-### Backend
-
-| Technology | Purpose |
-|------------|---------|
-| **FastAPI** | High-performance web framework |
-| **Python 3.8+** | Core programming language |
-| **OpenAI API** | Large Language Model for AI agents |
-| **Firebase Admin SDK** | Backend authentication and database |
-| **Pydantic** | Data validation and settings management |
-| **python-dotenv** | Environment variable management |
-
-### Frontend
-
-| Technology | Purpose |
-|------------|---------|
-| **React** | UI library for building interactive interfaces |
-| **Tailwind CSS** | Utility-first CSS framework |
-
-### Database & Authentication
-
-| Service | Purpose |
-|---------|---------|
-| **Firebase Firestore** | NoSQL cloud database |
-| **Firebase Authentication** | User authentication service |
-
-
-## Project Structure
-
-```
-levelup/
+## 📂 Project Structure
+Skill-Sync/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── config.py
 │   │   ├── routes/
 │   │   ├── services/
-│   │   ├── models/
-│   │   └── utils/
+│   │   └── models/
 │   ├── requirements.txt
 │   └── .env.example
 │
 ├── frontend/
 │   ├── src/
-│   ├── public/
-│   └── README.md
+│   └── public/
 │
-├── docs/
-│   ├── architecture.md
-│   ├── api.md
-│   └── agent-logic.md
-│
-├── README.md
-└── .gitignore
-```
+└── README.md
 
-## Setup Instructions
+---
+
+## ⚙️ Setup
 
 ### Prerequisites
 
-| Requirement | Version | Purpose |
-|-------------|---------|---------|
-| **Python** | 3.8+ | Backend runtime |
-| **Node.js** | 14+ | Frontend runtime |
-| **npm** | Latest | Package manager |
-| **Git** | Latest | Version control |
+- Python 3.8+
+- Node.js 14+
+- Firebase project
+- Azure OpenAI API key
 
-### 1. Clone Repository
+### Backend
 
 ```bash
-git clone https://github.com/<your-username>/levelup.git
-cd levelup
+cd backend
+python -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
 ```
 
-### 2. Backend Setup
+| URL | Description |
+|-----|-------------|
+| http://127.0.0.1:8000 | API Root |
+| http://127.0.0.1:8000/docs | Swagger Docs |
 
-| Step | Command | Description |
-|------|---------|-------------|
-| **Navigate** | `cd backend` | Enter backend directory |
-| **Create venv** | `python -m venv venv` | Create virtual environment |
-| **Activate (Windows)** | `venv\Scripts\activate` | Activate virtual environment |
-| **Activate (macOS/Linux)** | `source venv/bin/activate` | Activate virtual environment |
-| **Install dependencies** | `pip install -r requirements.txt` | Install required packages |
-| **Run server** | `uvicorn app.main:app --reload` | Start development server |
+### Frontend
 
-#### Backend Access Points
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-| Service | URL |
-|---------|-----|
-| **API Root** | http://127.0.0.1:8000 |
-| **Interactive Docs** | http://127.0.0.1:8000/docs |
-| **Alternative Docs** | http://127.0.0.1:8000/redoc |
+---
 
-### 3. Frontend Setup
+## 🔑 Environment Variables
 
-| Step | Command | Description |
-|------|---------|-------------|
-| **Navigate** | `cd frontend` | Enter frontend directory |
-| **Install dependencies** | `npm install` | Install required packages |
-| **Run dev server** | `npm run dev` | Start development server |
-
-### 4. Environment Configuration
-
-Create a `.env` file inside `backend/` directory:
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `PROJECT_NAME` | Application name | LevelUP |
-| `ENV` | Environment mode | development |
-| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | your_azure_openai_key |
-| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint URL | https://your-resource.openai.azure.com |
-| `AZURE_OPENAI_API_VERSION` | Azure OpenAI API version | 2024-02-01 |
-| `AZURE_OPENAI_DEPLOYMENT_NAME` | Azure OpenAI model deployment name | gpt-4o-mini |
-| `FIREBASE_SERVICE_ACCOUNT_PATH` | Path to Firebase service account JSON file | ./firebase-credentials.json |
-| `FIREBASE_SERVICE_ACCOUNT` | Firebase service account JSON (inline alternative) | {"type":"service_account",...} |
-| `FRONTEND_URL` | Frontend URL for CORS allowlist | https://your-frontend-domain.com |
-
-**Example `.env` file:**
+Create a `.env` file inside `backend/`:
 
 ```env
-PROJECT_NAME=LevelUP
+PROJECT_NAME=Skill-Sync
 ENV=development
-AZURE_OPENAI_API_KEY=your_azure_openai_key_here
+AZURE_OPENAI_API_KEY=your_key_here
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
 AZURE_OPENAI_API_VERSION=2024-02-01
 AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o-mini
 FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-credentials.json
-# OR use inline JSON instead of path:
-# FIREBASE_SERVICE_ACCOUNT={"type":"service_account",...}
 FRONTEND_URL=http://localhost:5173
 ```
+
+## 💡 Future Enhancements
+
+- 📜 Detailed course recommendations per topic
+- 🏆 Gamification and achievement badges
+- 👥 Peer learning and community features
+- 📱 Mobile app version
+- 🌐 Multi-language support
